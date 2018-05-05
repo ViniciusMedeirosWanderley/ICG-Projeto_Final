@@ -4,6 +4,8 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.FPSAnimator;
 import javax.swing.JFrame;
 
 /**
@@ -31,6 +33,10 @@ public class Main {
         
         //frame.add(panel);
         frame.add(canvas);
+        
+        //FPSAnimator anim = new FPSAnimator(canvas, 30);
+        Animator anim = new Animator(canvas);
+        anim.start();
         
         frame.setVisible(true);
     }

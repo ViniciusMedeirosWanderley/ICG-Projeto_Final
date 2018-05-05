@@ -10,6 +10,10 @@ import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
 import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
 import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 import com.jogamp.opengl.glu.GLU;
+import java.io.File;
+import java.io.IOException;
+import opengl.part.LoadTextura;
+import opengl.part.SistemaParticulas;
 
 /**
  *
@@ -18,6 +22,10 @@ import com.jogamp.opengl.glu.GLU;
 public class MeuOpenGL implements GLEventListener{
 
     private GLU glu;
+    public static GL2 gl2;
+    
+    SistemaParticulas sp;
+    int[] textura_particula;    
     
     @Override
     public void init(GLAutoDrawable drawable) {
@@ -29,6 +37,26 @@ public class MeuOpenGL implements GLEventListener{
         //gl.glDepthFunc(GL_LEQUAL);                     // the type of depth test to do
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); // best perspective correction
         gl.glShadeModel(GL_SMOOTH);                     // blends colors nicely, and smoothes out lighting                     
+        
+        MeuOpenGL.gl2 = drawable.getGL().getGL2();
+        
+        
+        // Testando
+        gl.glEnable(GL_BLEND); //Enable alpha blending
+        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Set the blend function
+        File alpha = new File("img/circlealpha.bmp");
+        File rgb = new File("img/circle.bmp");
+        try {            
+            textura_particula = LoadTextura.loadTexturaAlpha(rgb, alpha);            
+        } catch (IOException ex) {
+            System.err.println("Erro carregando textura");
+        }
+        
+        float step = 1.0f/30.0f; //30fps
+        //float step = 0.01f;        
+        sp = new SistemaParticulas(textura_particula, 100, step);
+        
+        /***********************/
     }
 
     @Override
@@ -42,19 +70,48 @@ public class MeuOpenGL implements GLEventListener{
         gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear color and depth buffers
         
         gl.glMatrixMode(GL_MODELVIEW);
-        gl.glLoadIdentity();
+        gl.glLoadIdentity();                      
         
-        // Desenha um triangulo vermelho na tela
+        
+        /*/Desenha um triangulo vermelho na tela
         gl.glBegin(GL_TRIANGLES); 
             // Cor a ser usada
             gl.glColor3f(1f,0f,0f);
             //Vertices do triangulo
-            gl.glVertex3f(0.0f, 0.0f, -5.0f); 
-            gl.glVertex3f( 0.5f, 1.0f, -5.0f); 
-            gl.glVertex3f( 1.0f, 0.0f, -5.0f );                        
-        gl.glEnd();
+            gl.glVertex3f(0.0f -0.5f, 0.0f, -5.0f); 
+            gl.glVertex3f(0.5f -0.5f, 1.0f, -5.0f); 
+            gl.glVertex3f(1.0f -0.5f, 0.0f, -5.0f );                        
+        gl.glEnd();      
+        */
+        
+        // Testa o sistema de particulas
+        gl.glPushMatrix();            
+            sp.draw();
+            sp.step();
+        gl.glPopMatrix();
+        
+        /* Desenha uma particula na tela com textura Alpha
+        gl.glEnable(GL_TEXTURE_2D);
+        gl.glBindTexture(GL_TEXTURE_2D, textura_particula[0]);
+        float z = -5.0f;
+        gl.glColor4f(1f,1f,1f,1f);
+        gl.glBegin(GL_TRIANGLE_STRIP); // Build Quad From A Triangle Strip
+                gl.glTexCoord2d(1, 1);
+                gl.glVertex3f(0.5f, 0.5f, z); // Top Right
                 
-        drawable.swapBuffers();
+                gl.glTexCoord2d(0, 1);                
+                gl.glVertex3f(0f, 0.5f, z); // Top Left
+                
+                gl.glTexCoord2d(1, 0);
+                gl.glVertex3f(0.5f, 0f, z); // Bottom Right
+                
+                gl.glTexCoord2d(0, 0);
+                gl.glVertex3f(0f, 0f, z); // Bottom Left
+        gl.glEnd();        
+        gl.glDisable(GL_TEXTURE_2D);
+        /******************************/
+        
+        drawable.swapBuffers();        
     }
 
     @Override
