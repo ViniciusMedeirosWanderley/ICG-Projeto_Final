@@ -12,6 +12,7 @@ import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 import com.jogamp.opengl.glu.GLU;
 import java.io.File;
 import java.io.IOException;
+import opengl.part.Fogueira;
 import opengl.part.LoadTextura;
 import opengl.part.SistemaParticulas;
 
@@ -44,6 +45,7 @@ public class MeuOpenGL implements GLEventListener{
         // Testando
         gl.glEnable(GL_BLEND); //Enable alpha blending
         gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Set the blend function
+        
         File alpha = new File("img/circlealpha.bmp");
         File rgb = new File("img/circle.bmp");
         try {            
@@ -54,8 +56,12 @@ public class MeuOpenGL implements GLEventListener{
         
         float step = 1.0f/30.0f; //30fps
         //float step = 0.01f;        
-        sp = new SistemaParticulas(textura_particula, 100, step);
-        
+        float tamanho = 0.09f;//0.08f;
+        int numeroParticulas = 100;
+        //sp = new SistemaParticulas(textura_particula, step, tamanho);
+        //sp.criarEmissorDefault(numeroParticulas);
+        sp = new Fogueira(textura_particula, step, tamanho);
+        ((Fogueira)sp).setPos(0, -0.5f, -1);
         /***********************/
     }
 
@@ -72,17 +78,9 @@ public class MeuOpenGL implements GLEventListener{
         gl.glMatrixMode(GL_MODELVIEW);
         gl.glLoadIdentity();                      
         
-        
-        /*/Desenha um triangulo vermelho na tela
-        gl.glBegin(GL_TRIANGLES); 
-            // Cor a ser usada
-            gl.glColor3f(1f,0f,0f);
-            //Vertices do triangulo
-            gl.glVertex3f(0.0f -0.5f, 0.0f, -5.0f); 
-            gl.glVertex3f(0.5f -0.5f, 1.0f, -5.0f); 
-            gl.glVertex3f(1.0f -0.5f, 0.0f, -5.0f );                        
-        gl.glEnd();      
-        */
+        gl.glPushMatrix();            
+            //desenhaTrianguloTeste();
+        gl.glPopMatrix();
         
         // Testa o sistema de particulas
         gl.glPushMatrix();            
@@ -90,26 +88,9 @@ public class MeuOpenGL implements GLEventListener{
             sp.step();
         gl.glPopMatrix();
         
-        /* Desenha uma particula na tela com textura Alpha
-        gl.glEnable(GL_TEXTURE_2D);
-        gl.glBindTexture(GL_TEXTURE_2D, textura_particula[0]);
-        float z = -5.0f;
-        gl.glColor4f(1f,1f,1f,1f);
-        gl.glBegin(GL_TRIANGLE_STRIP); // Build Quad From A Triangle Strip
-                gl.glTexCoord2d(1, 1);
-                gl.glVertex3f(0.5f, 0.5f, z); // Top Right
-                
-                gl.glTexCoord2d(0, 1);                
-                gl.glVertex3f(0f, 0.5f, z); // Top Left
-                
-                gl.glTexCoord2d(1, 0);
-                gl.glVertex3f(0.5f, 0f, z); // Bottom Right
-                
-                gl.glTexCoord2d(0, 0);
-                gl.glVertex3f(0f, 0f, z); // Bottom Left
-        gl.glEnd();        
-        gl.glDisable(GL_TEXTURE_2D);
-        /******************************/
+        gl.glPushMatrix();            
+            //desenhaUmaParticulaTeste();
+        gl.glPopMatrix();
         
         drawable.swapBuffers();        
     }
@@ -133,6 +114,42 @@ public class MeuOpenGL implements GLEventListener{
         // Enable the model-view transform
         gl.glMatrixMode(GL_MODELVIEW);
         gl.glLoadIdentity(); // reset  
+    }
+    
+    private void desenhaTrianguloTeste(){        
+        GL2 gl = gl2;
+        //Desenha um triangulo vermelho na tela
+        gl.glBegin(GL_TRIANGLES); 
+            // Cor a ser usada
+            gl.glColor3f(1f,0f,0f);
+            //Vertices do triangulo
+            gl.glVertex3f(0.0f -0.5f, 0.0f, -5.0f); 
+            gl.glVertex3f(0.5f -0.5f, 1.0f, -5.0f); 
+            gl.glVertex3f(1.0f -0.5f, 0.0f, -5.0f );                        
+        gl.glEnd();              
+    }
+    
+    private void desenhaUmaParticulaTeste(){
+        GL2 gl = gl2;
+        // Desenha uma particula na tela com textura Alpha
+        gl.glEnable(GL_TEXTURE_2D);
+        gl.glBindTexture(GL_TEXTURE_2D, textura_particula[0]);
+        float z = -5.0f;
+        gl.glColor4f(1f,1f,1f,1f);
+        gl.glBegin(GL_TRIANGLE_STRIP); // Build Quad From A Triangle Strip
+                gl.glTexCoord2d(1, 1);
+                gl.glVertex3f(0.5f, 0.5f, z); // Top Right
+                
+                gl.glTexCoord2d(0, 1);                
+                gl.glVertex3f(0f, 0.5f, z); // Top Left
+                
+                gl.glTexCoord2d(1, 0);
+                gl.glVertex3f(0.5f, 0f, z); // Bottom Right
+                
+                gl.glTexCoord2d(0, 0);
+                gl.glVertex3f(0f, 0f, z); // Bottom Left
+        gl.glEnd();        
+        gl.glDisable(GL_TEXTURE_2D);            
     }
     
 }

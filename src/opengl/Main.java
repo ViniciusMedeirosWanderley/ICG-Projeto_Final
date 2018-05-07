@@ -34,8 +34,8 @@ public class Main {
         //frame.add(panel);
         frame.add(canvas);
         
-        //FPSAnimator anim = new FPSAnimator(canvas, 30);
-        Animator anim = new Animator(canvas);
+        FPSAnimator anim = new FPSAnimator(canvas, 30);
+        //Animator anim = new Animator(canvas);
         anim.start();
         
         frame.setVisible(true);
