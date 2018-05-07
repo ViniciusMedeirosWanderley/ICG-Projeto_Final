@@ -96,7 +96,7 @@ public class MeuOpenGL implements GLEventListener{
     }
 
     @Override
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {//resize
         GL2 gl = drawable.getGL().getGL2();  // get the OpenGL 2 graphics context              
         
         if (height == 0) // prevent divide by zero
@@ -109,7 +109,7 @@ public class MeuOpenGL implements GLEventListener{
         // Setup perspective projection, with aspect ratio matches viewport
         gl.glMatrixMode(GL_PROJECTION);  // choose projection matrix
         gl.glLoadIdentity();             // reset projection matrix
-        glu.gluPerspective(45.0, aspect, 1.0, 100.0); // fovy, aspect, zNear, zFar
+        glu.gluPerspective(45.0, aspect, 1.0, 100.0); // cameraAngle, aspect, zNear, zFar
 
         // Enable the model-view transform
         gl.glMatrixMode(GL_MODELVIEW);
