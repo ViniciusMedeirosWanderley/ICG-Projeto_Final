@@ -12,6 +12,7 @@ import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 import com.jogamp.opengl.glu.GLU;
 import java.io.File;
 import java.io.IOException;
+import opengl.control.Camera;
 import opengl.part.Fogueira;
 import opengl.part.LoadTextura;
 import opengl.part.SistemaParticulas;
@@ -26,7 +27,13 @@ public class MeuOpenGL implements GLEventListener{
     public static GL2 gl2;
     
     SistemaParticulas sp;
-    int[] textura_particula;    
+    int[] textura_particula;
+
+    Camera cam;
+
+    public MeuOpenGL(Camera c) {
+        cam = c;
+    }
     
     @Override
     public void init(GLAutoDrawable drawable) {
@@ -39,8 +46,7 @@ public class MeuOpenGL implements GLEventListener{
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); // best perspective correction
         gl.glShadeModel(GL_SMOOTH);                     // blends colors nicely, and smoothes out lighting                     
         
-        MeuOpenGL.gl2 = drawable.getGL().getGL2();
-        
+        MeuOpenGL.gl2 = drawable.getGL().getGL2();        
         
         // Testando
         gl.glEnable(GL_BLEND); //Enable alpha blending
@@ -73,17 +79,40 @@ public class MeuOpenGL implements GLEventListener{
     @Override
     public void display(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();  // get the OpenGL 2 graphics context
-        gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear color and depth buffers
+        gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear color and depth buffers        
         
         gl.glMatrixMode(GL_MODELVIEW);
         gl.glLoadIdentity();                      
         
-        gl.glPushMatrix();            
-            //desenhaTrianguloTeste();
+        
+        glu.gluLookAt(cam.getPos()[0], cam.getPos()[1], cam.getPos()[2],
+                      cam.getLook()[0], cam.getLook()[1], cam.getLook()[2],
+                      cam.getUp()[0], cam.getUp()[1], cam.getUp()[2]);                
+        
+        gl.glPushMatrix();        
+            gl.glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+            gl.glColor3f(1f,0f,0f);
+            desenhaTrianguloTeste();
         gl.glPopMatrix();
         
-        // Testa o sistema de particulas
+        gl.glPushMatrix();                               
+            gl.glColor3f(0f,1f,1f);
+            desenhaTrianguloTeste();
+        gl.glPopMatrix();
+        
+        gl.glPushMatrix();                               
+            gl.glTranslatef(0, 0f, 12f);
+            gl.glColor3f(0f,0f,1f);
+            desenhaTrianguloTeste();
+        gl.glPopMatrix();
+        
+        // desenha chao
         gl.glPushMatrix();            
+            desenhaChao(gl);
+        gl.glPopMatrix();
+
+        // Testa o sistema de particulas
+        gl.glPushMatrix();                        
             sp.draw();
             sp.step();
         gl.glPopMatrix();
@@ -96,7 +125,7 @@ public class MeuOpenGL implements GLEventListener{
     }
 
     @Override
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {//resize
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         GL2 gl = drawable.getGL().getGL2();  // get the OpenGL 2 graphics context              
         
         if (height == 0) // prevent divide by zero
@@ -109,19 +138,19 @@ public class MeuOpenGL implements GLEventListener{
         // Setup perspective projection, with aspect ratio matches viewport
         gl.glMatrixMode(GL_PROJECTION);  // choose projection matrix
         gl.glLoadIdentity();             // reset projection matrix
-        glu.gluPerspective(45.0, aspect, 1.0, 100.0); // cameraAngle, aspect, zNear, zFar
+        glu.gluPerspective(45.0, aspect, 1.0, 100.0); // fovy, aspect, zNear, zFar
 
         // Enable the model-view transform
         gl.glMatrixMode(GL_MODELVIEW);
         gl.glLoadIdentity(); // reset  
-    }
+    }    
     
     private void desenhaTrianguloTeste(){        
-        GL2 gl = gl2;
+        GL2 gl = gl2;                     
         //Desenha um triangulo vermelho na tela
         gl.glBegin(GL_TRIANGLES); 
             // Cor a ser usada
-            gl.glColor3f(1f,0f,0f);
+            //gl.glColor3f(1f,0f,0f);
             //Vertices do triangulo
             gl.glVertex3f(0.0f -0.5f, 0.0f, -5.0f); 
             gl.glVertex3f(0.5f -0.5f, 1.0f, -5.0f); 
@@ -150,6 +179,19 @@ public class MeuOpenGL implements GLEventListener{
                 gl.glVertex3f(0f, 0f, z); // Bottom Left
         gl.glEnd();        
         gl.glDisable(GL_TEXTURE_2D);            
+    }
+
+    private void desenhaChao(GL2 gl) {
+        gl.glColor4f(0f,0.5f,0f,1f);
+        gl.glBegin(GL_TRIANGLE_STRIP); // Build Quad From A Triangle Strip                
+                gl.glVertex3f(100.0f, -0.5f, -100.0f); // Top Right                
+                
+                gl.glVertex3f(-100.0f, -0.5f, -100.0f); // Top Left                
+                
+                gl.glVertex3f(100.0f, -0.5f, 100.0f); // Bottom Right                
+                
+                gl.glVertex3f(-100.0f, -0.5f, 100.0f); // Bottom Left
+        gl.glEnd();        
     }
     
 }

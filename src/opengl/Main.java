@@ -6,7 +6,10 @@ import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.FPSAnimator;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import opengl.control.Camera;
+import opengl.control.MapaTeclado;
 
 /**
  *
@@ -28,7 +31,14 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);                
         
-        canvas.addGLEventListener(new MeuOpenGL());
+        // Testando camera
+        Camera cam = new Camera();
+        cam.setPos(0, 0, 2);
+        cam.setLook(0, 0, 0);
+        cam.setUp(0, 1, 0);
+        /***************************/
+        
+        canvas.addGLEventListener(new MeuOpenGL(cam));
         //panel.addGLEventListener(new MeuOpenGL());
         
         //frame.add(panel);
@@ -39,6 +49,14 @@ public class Main {
         anim.start();
         
         frame.setVisible(true);
+        
+        configKeyBindings(frame.getRootPane(), cam);
+    }
+    
+    private static void configKeyBindings(javax.swing.JRootPane root, Camera cam) {        
+        MapaTeclado key = new MapaTeclado(root, cam);
+        root.setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, key.getInputMap());
+        root.setActionMap(key.getActionMap());
     }
     
 }
