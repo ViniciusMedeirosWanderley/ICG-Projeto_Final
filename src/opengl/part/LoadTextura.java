@@ -52,6 +52,34 @@ public class LoadTextura {
         return pixels;
     }
     
+    // add rgb channel
+    private static byte[] addRGBChannel(File arqRgb) throws IOException{
+        BufferedImage imgRGB = ImageIO.read(arqRgb);
+        
+        byte[] pixels = new byte[imgRGB.getWidth() * imgRGB.getHeight() * 4];        
+        
+        byte[] rgb = ((DataBufferByte) imgRGB.getRaster().getDataBuffer()).getData();
+        
+        
+        for (int y = 0; y < imgRGB.getHeight(); y++) {
+            for (int x = 0; x < imgRGB.getWidth(); x++) {
+                //adiciona o rgb
+                for (int i = 0; i < 3; i++) {                                        
+                    pixels[4 * (y * imgRGB.getWidth() + x) + i] = rgb[3 * (y * imgRGB.getWidth() + x) + i];
+                    
+                            //->pixels[3 * (y * image->width + x) + j];
+                }                
+                //adiciona o alpha                
+                                           
+            }            
+            
+        }                
+        
+        return pixels;
+    }
+    
+    
+    
     /**
      * Combina os canais de uma imagem RGB com outra imagem que 
      * representa o Alpha e retorna a textura no formato RGBA
@@ -74,5 +102,20 @@ public class LoadTextura {
         
         return texturaId;    
     }
+    
+    public static int[] loadTexturaGrass(File arqRgb) throws IOException {
+        int[] texturaId = new int[1];
+        byte[] pixels = LoadTextura.addRGBChannel(arqRgb);
+        BufferedImage img = ImageIO.read(arqRgb);
+        
+        gl.glGenTextures(1, texturaId, 0);
+        gl.glBindTexture(GL.GL_TEXTURE_2D, texturaId[0]);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(pixels));
+        
+        return texturaId;    
+    }
+    
     
 }

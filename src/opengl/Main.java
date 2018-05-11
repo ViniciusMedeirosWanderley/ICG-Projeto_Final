@@ -22,8 +22,8 @@ public class Main {
         GLCapabilities capabilities = new GLCapabilities(profile);
         capabilities.setDoubleBuffered(true);        
         
-        GLCanvas canvas = new GLCanvas(capabilities);  
-        //GLJPanel panel = new GLJPanel(capabilities);                
+        //GLCanvas canvas = new GLCanvas(capabilities);  
+        GLJPanel panel = new GLJPanel(capabilities);                
         
         JFrame frame = new JFrame("OpenGL com JOGL");                
         
@@ -38,13 +38,13 @@ public class Main {
         cam.setUp(0, 1, 0);
         /***************************/
         
-        canvas.addGLEventListener(new MeuOpenGL(cam));
-        //panel.addGLEventListener(new MeuOpenGL());
+        //canvas.addGLEventListener(new MeuOpenGL(cam));
+        panel.addGLEventListener(new MeuOpenGL(cam));
         
-        //frame.add(panel);
-        frame.add(canvas);
+        frame.add(panel);
+        //frame.add(canvas);
         
-        FPSAnimator anim = new FPSAnimator(canvas, 30);
+        FPSAnimator anim = new FPSAnimator(panel, 30);
         //Animator anim = new Animator(canvas);
         anim.start();
         

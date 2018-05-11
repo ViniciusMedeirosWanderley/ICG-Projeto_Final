@@ -12,6 +12,8 @@ import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 import com.jogamp.opengl.glu.GLU;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import opengl.control.Camera;
 import opengl.part.Fogueira;
 import opengl.part.LoadTextura;
@@ -28,6 +30,7 @@ public class MeuOpenGL implements GLEventListener{
     
     SistemaParticulas sp;
     int[] textura_particula;
+    int[] textura_grass;
 
     Camera cam;
 
@@ -54,11 +57,20 @@ public class MeuOpenGL implements GLEventListener{
         
         File alpha = new File("img/circlealpha.bmp");
         File rgb = new File("img/circle.bmp");
+        File grass = new File("img/grass.bmp");
+        
         try {            
             textura_particula = LoadTextura.loadTexturaAlpha(rgb, alpha);            
         } catch (IOException ex) {
             System.err.println("Erro carregando textura");
         }
+        
+        try {
+            textura_grass = LoadTextura.loadTexturaGrass(grass);
+        } catch (IOException ex) {
+            System.err.println("Erro carregando textura");
+        }
+        
         
         float step = 1.0f/30.0f; //30fps
         //float step = 0.01f;        
@@ -182,15 +194,22 @@ public class MeuOpenGL implements GLEventListener{
     }
 
     private void desenhaChao(GL2 gl) {
-        gl.glColor4f(0f,0.5f,0f,1f);
-        gl.glBegin(GL_TRIANGLE_STRIP); // Build Quad From A Triangle Strip                
-                gl.glVertex3f(100.0f, -0.5f, -100.0f); // Top Right                
+        //gl.glColor4f(0f,0.5f,0f,1f);
+        gl.glEnable(GL_TEXTURE_2D);
+        gl.glBindTexture(GL_TEXTURE_2D, textura_grass[0]);
+        //float z = -5.0f;
+        gl.glBegin(GL_TRIANGLE_STRIP); // Build Quad From A Triangle Strip 
+                gl.glTexCoord2d(0, 0);
+                gl.glVertex3f(10.0f, -0.5f, -10.0f); // Top Right                
                 
-                gl.glVertex3f(-100.0f, -0.5f, -100.0f); // Top Left                
+                gl.glTexCoord2d(1, 0);
+                gl.glVertex3f(-10.0f, -0.5f, -10.0f); // Top Left                
                 
-                gl.glVertex3f(100.0f, -0.5f, 100.0f); // Bottom Right                
+                gl.glTexCoord2d(0, 1);
+                gl.glVertex3f(10.0f, -0.5f, 10.0f); // Bottom Right                
                 
-                gl.glVertex3f(-100.0f, -0.5f, 100.0f); // Bottom Left
+                gl.glTexCoord2d(1, 1);
+                gl.glVertex3f(-10.0f, -0.5f, 10.0f); // Bottom Left
         gl.glEnd();        
     }
     
