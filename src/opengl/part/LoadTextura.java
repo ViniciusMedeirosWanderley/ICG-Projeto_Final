@@ -70,7 +70,8 @@ public class LoadTextura {
                             //->pixels[3 * (y * image->width + x) + j];
                 }                
                 //adiciona o alpha                
-                                           
+                pixels[4 * (y * imgRGB.getWidth() + x) + 3] = 1;                            
+                
             }            
             
         }                
@@ -110,9 +111,9 @@ public class LoadTextura {
         
         gl.glGenTextures(1, texturaId, 0);
         gl.glBindTexture(GL.GL_TEXTURE_2D, texturaId[0]);
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(pixels));
+        //gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+        //gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, img.getWidth(), img.getHeight(), 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(pixels));
         
         return texturaId;    
     }
