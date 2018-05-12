@@ -125,6 +125,12 @@ public class MeuOpenGL implements GLEventListener{
             gl.glEnable(GL_BLEND);
         gl.glPopMatrix();
 
+        // desenha esfera
+        gl.glPushMatrix();
+        desenhaEsfera();
+        gl.glPopMatrix();
+        
+        
         // Testa o sistema de particulas
         gl.glPushMatrix();                        
             sp.draw();
@@ -214,6 +220,13 @@ public class MeuOpenGL implements GLEventListener{
                 gl.glVertex3f(-100.0f, -0.5f, 100.0f); // Bottom Left
         gl.glEnd();
         gl.glDisable(GL_TEXTURE_2D);        
+    }
+    
+    private void desenhaEsfera(){        
+        GL2 gl = gl2;                     
+
+        gl.glColor4f(1f, 0f, 0f, 0.5f);
+        glu.gluSphere(glu.gluNewQuadric(), 1,20,20);
     }
     
 }
