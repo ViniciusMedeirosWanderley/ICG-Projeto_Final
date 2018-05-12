@@ -31,7 +31,8 @@ public class MeuOpenGL implements GLEventListener{
     SistemaParticulas sp;
     int[] textura_particula;
     int[] textura_grass;
-
+    int[] textura_night;
+    
     Camera cam;
 
     public MeuOpenGL(Camera c) {
@@ -58,18 +59,17 @@ public class MeuOpenGL implements GLEventListener{
         File alpha = new File("img/circlealpha.bmp");
         File rgb = new File("img/circle.bmp");
         File grass = new File("img/grass1.bmp");
+        File night = new File("img/night.bmp");
         
         try {            
-            textura_particula = LoadTextura.loadTexturaAlpha(rgb, alpha);            
-        } catch (IOException ex) {
-            System.err.println("Erro carregando textura");
-        }
-        
-        try {
+            textura_particula = LoadTextura.loadTexturaAlpha(rgb, alpha);
             textura_grass = LoadTextura.loadTexturaGrass(grass);
+            textura_night = LoadTextura.loadTexturaGrass(night);
         } catch (IOException ex) {
             System.err.println("Erro carregando textura");
         }
+
+        
         
         
         float step = 1.0f/30.0f; //30fps
@@ -101,6 +101,7 @@ public class MeuOpenGL implements GLEventListener{
                       cam.getLook()[0], cam.getLook()[1], cam.getLook()[2],
                       cam.getUp()[0], cam.getUp()[1], cam.getUp()[2]);                
         
+        
         gl.glPushMatrix();        
             gl.glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
             gl.glColor3f(1f,0f,0f);
@@ -124,12 +125,6 @@ public class MeuOpenGL implements GLEventListener{
             desenhaChao(gl);
             gl.glEnable(GL_BLEND);
         gl.glPopMatrix();
-
-        // desenha esfera
-        gl.glPushMatrix();
-        desenhaEsfera();
-        gl.glPopMatrix();
-        
         
         // Testa o sistema de particulas
         gl.glPushMatrix();                        
@@ -139,6 +134,14 @@ public class MeuOpenGL implements GLEventListener{
         
         gl.glPushMatrix();            
             //desenhaUmaParticulaTeste();
+        gl.glPopMatrix();
+        
+                // desenha esfera
+        gl.glPushMatrix();
+        gl.glDisable(GL_DEPTH_TEST);
+        desenhaEsfera();
+        //gl.glTranslatef(0f, 0f, 0f);
+        gl.glEnable(GL_DEPTH_TEST);
         gl.glPopMatrix();
         
         drawable.swapBuffers();        
@@ -224,9 +227,11 @@ public class MeuOpenGL implements GLEventListener{
     
     private void desenhaEsfera(){        
         GL2 gl = gl2;                     
-
         gl.glColor4f(1f, 0f, 0f, 0.5f);
-        glu.gluSphere(glu.gluNewQuadric(), 1,20,20);
+        //gl.glEnable(GL_TEXTURE_2D);
+        //gl.glBindTexture(GL_TEXTURE_2D, textura_night[0]);
+        glu.gluSphere(glu.gluNewQuadric(), 100,20,20);
+        //gl.glDisable(GL_TEXTURE_2D);
     }
     
 }
