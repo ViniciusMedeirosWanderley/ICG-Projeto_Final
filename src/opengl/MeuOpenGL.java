@@ -103,8 +103,10 @@ public class MeuOpenGL implements GLEventListener{
         
         // desenha esfera
         gl.glPushMatrix();
+        gl.glDisable(GL_BLEND);
         gl.glDisable(GL_DEPTH_TEST);
         desenhaEsfera();
+        gl.glEnable(GL_BLEND);
         gl.glEnable(GL_DEPTH_TEST);
         gl.glPopMatrix();
         
