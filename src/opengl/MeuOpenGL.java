@@ -212,7 +212,8 @@ public class MeuOpenGL implements GLEventListener{
                 
                 gl.glTexCoord2d(0, 0);
                 gl.glVertex3f(-100.0f, -0.5f, 100.0f); // Bottom Left
-        gl.glEnd();        
+        gl.glEnd();
+        gl.glDisable(GL_TEXTURE_2D);        
     }
     
 }
