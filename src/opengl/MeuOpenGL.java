@@ -57,7 +57,7 @@ public class MeuOpenGL implements GLEventListener{
         
         File alpha = new File("img/circlealpha.bmp");
         File rgb = new File("img/circle.bmp");
-        File grass = new File("img/grass.bmp");
+        File grass = new File("img/grass1.bmp");
         
         try {            
             textura_particula = LoadTextura.loadTexturaAlpha(rgb, alpha);            
@@ -201,13 +201,13 @@ public class MeuOpenGL implements GLEventListener{
         gl.glBindTexture(GL_TEXTURE_2D, textura_grass[0]);
         //float z = -5.0f;
         gl.glBegin(GL_TRIANGLE_STRIP); // Build Quad From A Triangle Strip 
-                gl.glTexCoord2d(70, 70);
+                gl.glTexCoord2d(100, 100);
                 gl.glVertex3f(100.0f, -0.5f, -100.0f); // Top Right                
                 
-                gl.glTexCoord2d(0, 70);
+                gl.glTexCoord2d(0, 100);
                 gl.glVertex3f(-100.0f, -0.5f, -100.0f); // Top Left                
                 
-                gl.glTexCoord2d(70, 0);
+                gl.glTexCoord2d(100, 0);
                 gl.glVertex3f(100.0f, -0.5f, 100.0f); // Bottom Right                
                 
                 gl.glTexCoord2d(0, 0);
