@@ -101,7 +101,8 @@ public class MeuOpenGL implements GLEventListener{
                       cam.getLook()[0], cam.getLook()[1], cam.getLook()[2],
                       cam.getUp()[0], cam.getUp()[1], cam.getUp()[2]);                
         
-         gl.glPushMatrix();
+        // desenha esfera
+        gl.glPushMatrix();
         gl.glDisable(GL_DEPTH_TEST);
         desenhaEsfera();
         gl.glEnable(GL_DEPTH_TEST);
@@ -140,10 +141,7 @@ public class MeuOpenGL implements GLEventListener{
         gl.glPushMatrix();            
             //desenhaUmaParticulaTeste();
         gl.glPopMatrix();
-        
-                // desenha esfera
-       
-        
+                      
         drawable.swapBuffers();        
     }
 
