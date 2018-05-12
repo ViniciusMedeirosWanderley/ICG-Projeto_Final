@@ -8,11 +8,20 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
 import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
+import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW_MATRIX;
 import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.math.VectorUtil;
 import java.io.File;
 import java.io.IOException;
+import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import opengl.control.Camera;
+import opengl.model.Face;
+import opengl.model.LoadModelos;
+import opengl.model.Modelo;
 import opengl.part.Fogueira;
 import opengl.part.LoadTextura;
 import opengl.part.SistemaParticulas;
@@ -30,6 +39,8 @@ public class MeuOpenGL implements GLEventListener{
     int[] textura_particula;
 
     Camera cam;
+    
+    Modelo arvore;
 
     public MeuOpenGL(Camera c) {
         cam = c;
@@ -41,8 +52,14 @@ public class MeuOpenGL implements GLEventListener{
         glu = GLU.createGLU(gl);                    // get GL Utilities        
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);    // set background (clear) color
         gl.glClearDepth(1.0f);                    // set clear depth value to farthest
-        //gl.glEnable(GL_DEPTH_TEST);               // enables depth testing
-        //gl.glDepthFunc(GL_LEQUAL);                     // the type of depth test to do
+        
+        ///////////////////////////////////
+        gl.glEnable(GL_DEPTH_TEST);               // enables depth testing
+        gl.glDepthFunc(GL_LEQUAL);                     // the type of depth test to do        
+        
+        gl.glEnable(GL_CULL_FACE);
+        ///////////////////////////////////
+        
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); // best perspective correction
         gl.glShadeModel(GL_SMOOTH);                     // blends colors nicely, and smoothes out lighting                     
         
@@ -60,14 +77,24 @@ public class MeuOpenGL implements GLEventListener{
             System.err.println("Erro carregando textura");
         }
         
+        //////////////////////////////////
+        //Carrega Modelos
+        try {            
+            arvore = LoadModelos.loadObj(new File("assets/Tree/lowpolytree.obj"));
+        } catch (IOException ex) {
+            System.err.println("Erro carregando modelo.");
+        }
+        
+        //////////////////////////////////
+        
         float step = 1.0f/30.0f; //30fps
         //float step = 0.01f;        
         float tamanho = 0.09f;//0.08f;
-        int numeroParticulas = 100;
+        //int numeroParticulas = 100;
         //sp = new SistemaParticulas(textura_particula, step, tamanho);
         //sp.criarEmissorDefault(numeroParticulas);
         sp = new Fogueira(textura_particula, step, tamanho);
-        ((Fogueira)sp).setPos(0, -0.5f, -1);
+        ((Fogueira)sp).setPos(0, -0.5f, 1f); //z= - 1
         /***********************/
     }
 
@@ -82,17 +109,51 @@ public class MeuOpenGL implements GLEventListener{
         gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear color and depth buffers        
         
         gl.glMatrixMode(GL_MODELVIEW);
-        gl.glLoadIdentity();                      
-        
+        gl.glLoadIdentity();   
         
         glu.gluLookAt(cam.getPos()[0], cam.getPos()[1], cam.getPos()[2],
                       cam.getLook()[0], cam.getLook()[1], cam.getLook()[2],
                       cam.getUp()[0], cam.getUp()[1], cam.getUp()[2]);                
         
+        gl.glEnable(GL_CULL_FACE);        
+        
+        gl.glFrontFace(GL_CCW);
+        
+        gl.glCullFace(GL_FRONT);                            
+            desenha(gl);
+        gl.glCullFace(GL_BACK);                    
+            desenha(gl);
+        
+        ///////////////////////////////////////
+        //gl.glDisable(GL_CULL_FACE);        
+        //desenhaFogueiraSemRotacao(gl);        
+        ////////////////////////////////////////
+        
+        // Testa o sistema de particulas
+        gl.glPushMatrix();                        
+            sp.draw();
+            sp.step();
+        gl.glPopMatrix();
+        
+        drawable.swapBuffers();        
+    }
+    
+    private void desenha(GL2 gl){
+        gl.glPushMatrix();
+            gl.glDisable(GL_DEPTH_TEST);
+            desenhaEsfera();
+            gl.glEnable(GL_DEPTH_TEST);
+        gl.glPopMatrix();
+        
         gl.glPushMatrix();        
             gl.glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
             gl.glColor3f(1f,0f,0f);
             desenhaTrianguloTeste();
+        gl.glPopMatrix();
+        
+        gl.glPushMatrix();                               
+            gl.glColor3f(1f,0f,0f);
+            desenhaModelo(gl, arvore);
         gl.glPopMatrix();
         
         gl.glPushMatrix();                               
@@ -109,19 +170,7 @@ public class MeuOpenGL implements GLEventListener{
         // desenha chao
         gl.glPushMatrix();            
             desenhaChao(gl);
-        gl.glPopMatrix();
-
-        // Testa o sistema de particulas
-        gl.glPushMatrix();                        
-            sp.draw();
-            sp.step();
-        gl.glPopMatrix();
-        
-        gl.glPushMatrix();            
-            //desenhaUmaParticulaTeste();
-        gl.glPopMatrix();
-        
-        drawable.swapBuffers();        
+        gl.glPopMatrix();        
     }
 
     @Override
@@ -145,6 +194,64 @@ public class MeuOpenGL implements GLEventListener{
         gl.glLoadIdentity(); // reset  
     }    
     
+    private void desenhaFogueiraSemRotacao(GL2 gl){
+        float[] modelview = new float[16];
+        int i,j;
+        // save the current modelview matrix
+        gl.glPushMatrix();
+            // get the current modelview matrix                
+            gl.glGetFloatv(GL_MODELVIEW_MATRIX , FloatBuffer.wrap(modelview));
+            /// undo all rotations
+            // beware all scaling is lost as well 
+            for( i=0; i<3; i++ ) 
+                for( j=0; j<3; j++ ) {
+                    if ( i==j )
+                        modelview[i*4+j] = 1.0f;
+                    else
+                        modelview[i*4+j] = 0.0f;
+            }                       
+            /// set the modelview with no rotations and scaling
+            gl.glLoadMatrixf(FloatBuffer.wrap(modelview));
+            
+            sp.draw();
+            sp.step();
+        /// restores the modelview matrix
+        gl.glPopMatrix();
+        
+    }
+    
+    private void desenhaEsfera(){        
+        GL2 gl = gl2;
+        
+        gl.glColor4f(0f, 0f, 0.111f, 1f); 
+        gl.glTranslatef(0, 0, 2);
+
+        glu.gluSphere(glu.gluNewQuadric(), 10,20,20);
+        //gl.glEnable(GL_DEPTH_TEST);               
+    }
+    
+    private void desenhaModelo(GL2 gl, Modelo m){               
+        float x,y,z;
+        int vIndex;
+        float[] vertice;
+        
+        for (Face face : m.getFaces()) {             
+            gl.glBegin(GL_TRIANGLES);                 
+                for (int i = 0; i < face.getVertices().size(); i++) {
+                    vIndex = face.getVertices().get(i) - 1;
+
+                    vertice = m.getVertices().get(vIndex);
+                    x = vertice[0];
+                    y = vertice[1];
+                    z = vertice[2];                
+
+                    //Vertices do triangulo
+                    gl.glVertex3f(x, y, z);                     
+                }
+            gl.glEnd();              
+        }    
+    }
+    
     private void desenhaTrianguloTeste(){        
         GL2 gl = gl2;                     
         //Desenha um triangulo vermelho na tela
@@ -167,16 +274,16 @@ public class MeuOpenGL implements GLEventListener{
         gl.glColor4f(1f,1f,1f,1f);
         gl.glBegin(GL_TRIANGLE_STRIP); // Build Quad From A Triangle Strip
                 gl.glTexCoord2d(1, 1);
-                gl.glVertex3f(0.5f, 0.5f, z); // Top Right
+                gl.glVertex3f(0.5f, 0.5f, z); // Top Right                
                 
                 gl.glTexCoord2d(0, 1);                
-                gl.glVertex3f(0f, 0.5f, z); // Top Left
+                gl.glVertex3f(0f, 0.5f, z); // Top Left                
                 
                 gl.glTexCoord2d(1, 0);
-                gl.glVertex3f(0.5f, 0f, z); // Bottom Right
+                gl.glVertex3f(0.5f, 0f, z); // Bottom Right                
                 
                 gl.glTexCoord2d(0, 0);
-                gl.glVertex3f(0f, 0f, z); // Bottom Left
+                gl.glVertex3f(0f, 0f, z); // Bottom Left                
         gl.glEnd();        
         gl.glDisable(GL_TEXTURE_2D);            
     }

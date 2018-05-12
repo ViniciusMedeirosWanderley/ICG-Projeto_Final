@@ -26,12 +26,8 @@ public class MapaTeclado extends InputMap {
         // rotaciona a camera para direita
         Action rotCamDir = new AbstractAction("rDir") {
             @Override
-            public void actionPerformed(ActionEvent e) {                                                
-                //System.out.println(cam.getPos()[0]+" "+cam.getPos()[1]+" "+cam.getPos()[2]);
-                //System.out.println(cam.getLook()[0]+" "+cam.getLook()[1]+" "+cam.getLook()[2]);
-                cam.rotacionarY(1.0f);
-                //System.out.println(cam.getPos()[0]+" "+cam.getPos()[1]+" "+cam.getPos()[2]);
-                //System.out.println(cam.getLook()[0]+" "+cam.getLook()[1]+" "+cam.getLook()[2]);
+            public void actionPerformed(ActionEvent e) {                                                                
+                cam.rotacionarY(1.0f);                
             }
         };        
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false),"rDir");        
@@ -40,12 +36,8 @@ public class MapaTeclado extends InputMap {
         // rotaciona a camera para esquerda
         Action rotCamEsq = new AbstractAction("rEsq") {
             @Override
-            public void actionPerformed(ActionEvent e) {                                                
-                //System.out.println(cam.getPos()[0]+" "+cam.getPos()[1]+" "+cam.getPos()[2]);
-                //System.out.println(cam.getLook()[0]+" "+cam.getLook()[1]+" "+cam.getLook()[2]);                                
-                cam.rotacionarY(-1.0f);
-                //System.out.println(cam.getPos()[0]+" "+cam.getPos()[1]+" "+cam.getPos()[2]);
-                //System.out.println(cam.getLook()[0]+" "+cam.getLook()[1]+" "+cam.getLook()[2]);
+            public void actionPerformed(ActionEvent e) {                                                                
+                cam.rotacionarY(-1.0f);                
             }
         };                
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false),"rEsq");        

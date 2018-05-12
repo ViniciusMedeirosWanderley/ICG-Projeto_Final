@@ -64,7 +64,7 @@ public class LoadTextura {
     public static int[] loadTexturaAlpha(File arqRgb, File arqAlpha) throws IOException {
         int[] texturaId = new int[1];
         byte[] pixels = LoadTextura.addAlphaChannel(arqRgb, arqAlpha);
-        BufferedImage img = ImageIO.read(arqRgb);
+        BufferedImage img = ImageIO.read(arqRgb);        
         
         gl.glGenTextures(1, texturaId, 0);
         gl.glBindTexture(GL.GL_TEXTURE_2D, texturaId[0]);
