@@ -196,22 +196,18 @@ public class MeuOpenGL implements GLEventListener{
     }
 
     private void desenhaChao(GL2 gl) {
-        gl.glColor4f(0f,1f,0f,1f);
+        gl.glColor4f(0f,1f,0f,0.5f);
         gl.glEnable(GL_TEXTURE_2D);
         gl.glBindTexture(GL_TEXTURE_2D, textura_grass[0]);
-        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         //float z = -5.0f;
         gl.glBegin(GL_TRIANGLE_STRIP); // Build Quad From A Triangle Strip 
-                gl.glTexCoord2d(1, 1);
+                gl.glTexCoord2d(70, 70);
                 gl.glVertex3f(100.0f, -0.5f, -100.0f); // Top Right                
                 
-                gl.glTexCoord2d(0, 1);
+                gl.glTexCoord2d(0, 70);
                 gl.glVertex3f(-100.0f, -0.5f, -100.0f); // Top Left                
                 
-                gl.glTexCoord2d(1, 0);
+                gl.glTexCoord2d(70, 0);
                 gl.glVertex3f(100.0f, -0.5f, 100.0f); // Bottom Right                
                 
                 gl.glTexCoord2d(0, 0);
