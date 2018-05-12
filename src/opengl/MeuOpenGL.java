@@ -101,6 +101,12 @@ public class MeuOpenGL implements GLEventListener{
                       cam.getLook()[0], cam.getLook()[1], cam.getLook()[2],
                       cam.getUp()[0], cam.getUp()[1], cam.getUp()[2]);                
         
+        gl.glPushMatrix();
+        gl.glDisable(GL_DEPTH_TEST);
+        desenhaEsfera();
+        //gl.glTranslatef(0f, 0f, 0f);
+        gl.glEnable(GL_DEPTH_TEST);
+        gl.glPopMatrix();
         
         gl.glPushMatrix();        
             gl.glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
@@ -118,7 +124,7 @@ public class MeuOpenGL implements GLEventListener{
             gl.glColor3f(0f,0f,1f);
             desenhaTrianguloTeste();
         gl.glPopMatrix();
-        
+                   
         // desenha chao
         gl.glPushMatrix();
             gl.glDisable(GL_BLEND);
@@ -137,12 +143,6 @@ public class MeuOpenGL implements GLEventListener{
         gl.glPopMatrix();
         
                 // desenha esfera
-        gl.glPushMatrix();
-        gl.glDisable(GL_DEPTH_TEST);
-        desenhaEsfera();
-        //gl.glTranslatef(0f, 0f, 0f);
-        gl.glEnable(GL_DEPTH_TEST);
-        gl.glPopMatrix();
         
         drawable.swapBuffers();        
     }
@@ -227,11 +227,9 @@ public class MeuOpenGL implements GLEventListener{
     
     private void desenhaEsfera(){        
         GL2 gl = gl2;                     
-        gl.glColor4f(1f, 0f, 0f, 0.5f);
-        //gl.glEnable(GL_TEXTURE_2D);
-        //gl.glBindTexture(GL_TEXTURE_2D, textura_night[0]);
-        glu.gluSphere(glu.gluNewQuadric(), 100,20,20);
-        //gl.glDisable(GL_TEXTURE_2D);
+        gl.glColor4f(0f, 0f, 0.1f, 1f);        
+        glu.gluSphere(glu.gluNewQuadric(), 1,20,20);
+        
     }
     
 }
