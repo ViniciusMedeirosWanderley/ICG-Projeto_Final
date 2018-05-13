@@ -94,7 +94,7 @@ public class MeuOpenGL implements GLEventListener{
         //sp = new SistemaParticulas(textura_particula, step, tamanho);
         //sp.criarEmissorDefault(numeroParticulas);
         sp = new Fogueira(textura_particula, step, tamanho);
-        ((Fogueira)sp).setPos(0, -0.5f, 1f); //z= - 1
+        ((Fogueira)sp).setPos(0.0f, -0.5f, 1.0f); //z= - 1
         /***********************/
     }
 
@@ -119,22 +119,24 @@ public class MeuOpenGL implements GLEventListener{
         
         gl.glFrontFace(GL_CCW);
         
+        gl.glPushMatrix();
         gl.glCullFace(GL_FRONT);                            
             desenha(gl);
         gl.glCullFace(GL_BACK);                    
             desenha(gl);
-        
-        ///////////////////////////////////////
-        //gl.glDisable(GL_CULL_FACE);        
-        //desenhaFogueiraSemRotacao(gl);        
-        ////////////////////////////////////////
-        
-        // Testa o sistema de particulas
-        gl.glPushMatrix();                        
-            sp.draw();
-            sp.step();
         gl.glPopMatrix();
         
+        ///////////////////////////////////////
+        //gl.glDisable(GL_CULL_FACE);                
+        desenhaFogueiraSemRotacao(gl);                
+        ////////////////////////////////////////
+        
+        /*// Testa o sistema de particulas
+        gl.glPushMatrix();              
+            sp.draw();
+            sp.step();      
+        gl.glPopMatrix();
+        */
         drawable.swapBuffers();        
     }
     
@@ -196,9 +198,12 @@ public class MeuOpenGL implements GLEventListener{
     
     private void desenhaFogueiraSemRotacao(GL2 gl){
         float[] modelview = new float[16];
-        int i,j;
+        int i,j;        
+        float fx = ((Fogueira)sp).getX();        
+        float fz = ((Fogueira)sp).getZ();                                
         // save the current modelview matrix
-        gl.glPushMatrix();
+        gl.glPushMatrix();            
+            gl.glTranslatef(fx, 0, fz+fz);        
             // get the current modelview matrix                
             gl.glGetFloatv(GL_MODELVIEW_MATRIX , FloatBuffer.wrap(modelview));
             /// undo all rotations
@@ -210,24 +215,26 @@ public class MeuOpenGL implements GLEventListener{
                     else
                         modelview[i*4+j] = 0.0f;
             }                       
+            
             /// set the modelview with no rotations and scaling
             gl.glLoadMatrixf(FloatBuffer.wrap(modelview));
             
+            gl.glTranslatef(-fx, 0, -fz-fz);
+            
             sp.draw();
-            sp.step();
-        /// restores the modelview matrix
-        gl.glPopMatrix();
-        
+            sp.step();            
+            
+            /// restores the modelview matrix
+            gl.glPopMatrix();        
     }
     
     private void desenhaEsfera(){        
         GL2 gl = gl2;
         
         gl.glColor4f(0f, 0f, 0.111f, 1f); 
-        gl.glTranslatef(0, 0, 2);
+        gl.glTranslatef(cam.getPos()[0], 0, cam.getPos()[2]);
 
-        glu.gluSphere(glu.gluNewQuadric(), 10,20,20);
-        //gl.glEnable(GL_DEPTH_TEST);               
+        glu.gluSphere(glu.gluNewQuadric(), 10,20,20);                    
     }
     
     private void desenhaModelo(GL2 gl, Modelo m){               
