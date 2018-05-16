@@ -65,9 +65,10 @@ public class MeuOpenGL implements GLEventListener{
         
         MeuOpenGL.gl2 = drawable.getGL().getGL2();        
         
-        // Testando
+        // Ativa o Alpha
         gl.glEnable(GL_BLEND); //Enable alpha blending
         gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Set the blend function
+        //////////////////////////////////
         
         File alpha = new File("img/circlealpha.bmp");
         File rgb = new File("img/circle.bmp");
@@ -83,8 +84,7 @@ public class MeuOpenGL implements GLEventListener{
             arvore = LoadModelos.loadObj(new File("assets/Tree/lowpolytree.obj"));
         } catch (IOException ex) {
             System.err.println("Erro carregando modelo.");
-        }
-        
+        }        
         //////////////////////////////////
         
         float step = 1.0f/30.0f; //30fps
@@ -155,7 +155,28 @@ public class MeuOpenGL implements GLEventListener{
         
         gl.glPushMatrix();                               
             gl.glColor3f(1f,0f,0f);
-            desenhaModelo(gl, arvore);
+            /// Luz
+            gl.glEnable(GL_LIGHTING);   
+            gl.glEnable(GL_LIGHT0);
+            gl.glLightfv(GL_LIGHT0, GL_AMBIENT, new float[]{0.3f,0.3f,0.3f}, 0);
+            //gl.glLightfv(GL_LIGHT0, GL_SPECULAR, new float[]{1f,1f,1f}, 0);            
+            float[] diffuse = {0.029850f,0.106291f,0.017666f,1};
+            float[] specular = {0.085514f,0.355277f,0.074845f,1};
+            gl.glMaterialfv(GL_FRONT, GL_AMBIENT, new float[]{0f,0f,0f,1}, 0);            
+            gl.glMaterialfv(GL_FRONT, GL_DIFFUSE,  diffuse, 0);            
+            gl.glMaterialfv(GL_FRONT, GL_SPECULAR, specular, 0);            
+            
+            ///
+            gl.glTranslatef(-8.5f, 1.0f, 0);
+            for (int i = 0; i < 10; i++) {                
+                desenhaModelo(gl, arvore);
+                gl.glTranslatef(2.0f, 0, 0);
+                gl.glMaterialfv(GL_FRONT, GL_DIFFUSE,  diffuse, 0);            
+                gl.glMaterialfv(GL_FRONT, GL_SPECULAR, specular, 0);            
+            }
+            
+            
+            gl.glDisable(GL_LIGHTING);
         gl.glPopMatrix();
         
         gl.glPushMatrix();                               
@@ -239,11 +260,13 @@ public class MeuOpenGL implements GLEventListener{
     
     private void desenhaModelo(GL2 gl, Modelo m){               
         float x,y,z;
-        int vIndex;
+        float nx,ny,nz;
+        int vIndex, nIndex;
         float[] vertice;
+        float[] normal;
         
         for (Face face : m.getFaces()) {             
-            gl.glBegin(GL_TRIANGLES);                 
+            gl.glBegin(GL_QUADS); // GL_TRIANGLES  // GL_TRIANGLE_STRIP                 
                 for (int i = 0; i < face.getVertices().size(); i++) {
                     vIndex = face.getVertices().get(i) - 1;
 
@@ -251,7 +274,20 @@ public class MeuOpenGL implements GLEventListener{
                     x = vertice[0];
                     y = vertice[1];
                     z = vertice[2];                
-
+                    
+                    nIndex = face.getVNormais().get(i) - 1;
+                    normal = m.getVNormais().get(nIndex);
+                    nx = normal[0];
+                    ny = normal[1];
+                    nz = normal[2];                    
+                    
+                    if((m == arvore) && (nIndex > 110)){
+                        gl.glMaterialfv(GL_FRONT, GL_DIFFUSE, new float[]{0.176206f,0.051816f,0.016055f,1}, 0);            
+                        gl.glMaterialfv(GL_FRONT, GL_SPECULAR, new float[]{0.015532f,0.005717f,0.002170f,1}, 0);            
+                    }
+                    
+                    //Normal do triangulo
+                    gl.glNormal3f(nx, ny, nz);
                     //Vertices do triangulo
                     gl.glVertex3f(x, y, z);                     
                 }
