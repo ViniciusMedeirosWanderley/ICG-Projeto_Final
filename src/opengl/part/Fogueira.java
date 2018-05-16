@@ -1,5 +1,6 @@
 package opengl.part;
 
+import com.jogamp.opengl.GL;
 import static com.jogamp.opengl.GL.GL_LINEAR;
 import static com.jogamp.opengl.GL.GL_ONE_MINUS_SRC_ALPHA;
 import static com.jogamp.opengl.GL.GL_SRC_ALPHA;
@@ -8,6 +9,7 @@ import static com.jogamp.opengl.GL.GL_TEXTURE_MAG_FILTER;
 import static com.jogamp.opengl.GL.GL_TEXTURE_MIN_FILTER;
 import static com.jogamp.opengl.GL.GL_TRIANGLE_STRIP;
 import static com.jogamp.opengl.GL2ES2.GL_ONE_MINUS_CONSTANT_ALPHA;
+import com.jogamp.opengl.GL2ES3;
 import opengl.part.emi.Emissor;
 import opengl.part.emi.EmissorCone;
 
@@ -64,6 +66,16 @@ public class Fogueira extends SistemaParticulas{
         posy = y;
         posz = z;
     }
+    
+    public float getX(){
+        return posx;
+    }
+    public float getY(){
+        return posy;
+    }
+    public float getZ(){
+        return posz;
+    }
 
     @Override
     public void draw() {
@@ -83,9 +95,13 @@ public class Fogueira extends SistemaParticulas{
                 float x = pos[0];
                 float y = pos[1];
                 float z = pos[2];                                       
-                                
+                
+                //float dx = x - posx;
+                float dz = z - posz;
+                //System.out.println(dx*dx + dz*dz);
                 // cria um efeito que parece Bloom
-                if((x*x + z*z) >= 1.0f)
+                //if((x*x + z*z) >= 1.16f)//1.0f                
+                if((dz) >= 0.083f)
                     gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
                 else {
                     gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -100,9 +116,9 @@ public class Fogueira extends SistemaParticulas{
                 float g = cor[1];
                 float b = cor[2];                
                 
-                gl.glColor4f(r, g, b, p.getVidaMax()-p.getVida());
+                gl.glColor4f(r, g, b, p.getVidaMax()-p.getVida());                                
                 
-                gl.glBegin(GL_TRIANGLE_STRIP);                    
+                gl.glBegin(GL_TRIANGLE_STRIP);                                                            
                     gl.glTexCoord2d(1, 1);
                     gl.glVertex3f(x + tam, y + tam, z); // Top Right
                 
@@ -113,7 +129,7 @@ public class Fogueira extends SistemaParticulas{
                     gl.glVertex3f(x + tam, y - tam, z); // Bottom Right
                 
                     gl.glTexCoord2d(0, 0);
-                    gl.glVertex3f(x - tam, y - tam, z); // Bottom Left
+                    gl.glVertex3f(x - tam, y - tam, z); // Bottom Left                    
                 gl.glEnd();    
             }            
         }
@@ -138,7 +154,7 @@ public class Fogueira extends SistemaParticulas{
             float minz = posz - 0.1f;
             float maxz = posz + 0.1f;
             float z = (minz + rand.nextFloat() * (maxz - minz));
-            
+                        
             p.setPos(x, 0, z);                                    
             
             float r = icorx;
@@ -181,6 +197,8 @@ public class Fogueira extends SistemaParticulas{
                     criarParticula(p);
                 }
             }
+            //ordenaParticulasDesc();
+            ordenaParticulasCresc();
         }
     
     }

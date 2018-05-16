@@ -57,7 +57,7 @@ public class Camera {
             look[2] = (float)(pos[2] - Math.cos(ang));            
         }
         
-        System.out.println("Direcao: "+dir+"\n");
+        //System.out.println("Direcao: "+dir+"\n");
     }
     
     public void transladar(double dx, double dy, double dz){

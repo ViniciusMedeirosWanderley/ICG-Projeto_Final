@@ -16,6 +16,8 @@ import opengl.control.MapaTeclado;
  * @author Leonardo Villeth
  */
 public class Main {
+    
+    public static Camera CAM;
 
     public static void main(String[] args) {
         final GLProfile profile = GLProfile.get(GLProfile.GL2);
@@ -33,9 +35,11 @@ public class Main {
         
         // Testando camera
         Camera cam = new Camera();
-        cam.setPos(0, 0, 2);
+        cam.setPos(0, 0, 5);
         cam.setLook(0, 0, 0);
         cam.setUp(0, 1, 0);
+        
+        CAM = cam;
         /***************************/
         
         //canvas.addGLEventListener(new MeuOpenGL(cam));
@@ -44,6 +48,7 @@ public class Main {
         frame.add(panel);
         //frame.add(canvas);
         
+        //FPSAnimator anim = new FPSAnimator(canvas, 30);
         FPSAnimator anim = new FPSAnimator(panel, 30);
         //Animator anim = new Animator(canvas);
         anim.start();
