@@ -10,6 +10,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import opengl.control.Camera;
 import opengl.control.MapaTeclado;
+import opengl.control.MouseInput;
 
 /**
  *
