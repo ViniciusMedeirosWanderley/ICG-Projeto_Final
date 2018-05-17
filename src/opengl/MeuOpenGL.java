@@ -37,7 +37,7 @@ public class MeuOpenGL implements GLEventListener{
     int[] textura_grass;
     int[] textura_night;
     
-    Camera cam;
+    Camera cam;       
     
     Modelo arvore;
 

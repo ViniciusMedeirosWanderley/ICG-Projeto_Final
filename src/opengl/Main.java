@@ -6,11 +6,12 @@ import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.FPSAnimator;
+import java.awt.event.MouseMotionListener;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import opengl.control.Camera;
 import opengl.control.MapaTeclado;
-import opengl.control.MouseInput;
+import opengl.control.Mouse;
 
 /**
  *
@@ -45,7 +46,7 @@ public class Main {
         
         //canvas.addGLEventListener(new MeuOpenGL(cam));
         panel.addGLEventListener(new MeuOpenGL(cam));
-        
+    
         frame.add(panel);
         //frame.add(canvas);
         
@@ -54,7 +55,15 @@ public class Main {
         //Animator anim = new Animator(canvas);
         anim.start();
         
-        frame.setVisible(true);
+        //Testando mouse
+        Mouse mouse = new Mouse(panel,cam);        
+        //Adicionando listeners do mouse
+        panel.addMouseMotionListener(mouse);
+        panel.addMouseListener(mouse);
+        
+        /*******************************/
+        
+        frame.setVisible(true); 
         
         configKeyBindings(frame.getRootPane(), cam);
     }
