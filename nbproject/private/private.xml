@@ -3,13 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/vinic/Documents/GitHub/ParticulasCG/src/opengl/part/emi/EmissorCone.java</file>
-            <file>file:/C:/Users/vinic/Documents/GitHub/ParticulasCG/src/opengl/part/emi/Emissor.java</file>
-            <file>file:/C:/Users/vinic/Documents/GitHub/ParticulasCG/src/opengl/part/Fogueira.java</file>
-            <file>file:/C:/Users/vinic/Documents/GitHub/ParticulasCG/src/opengl/MeuOpenGL.java</file>
-            <file>file:/C:/Users/vinic/Documents/GitHub/ParticulasCG/src/opengl/part/LoadTextura.java</file>
-            <file>file:/C:/Users/vinic/Documents/GitHub/ParticulasCG/src/opengl/part/Particula.java</file>
-            <file>file:/C:/Users/vinic/Documents/GitHub/ParticulasCG/src/opengl/part/SistemaParticulas.java</file>
+            <file>file:/home/leo/NetBeansProjects/ParticulasCG/src/opengl/MeuOpenGL.java</file>
+            <file>file:/home/leo/NetBeansProjects/ParticulasCG/src/opengl/Main.java</file>
+            <file>file:/home/leo/NetBeansProjects/ParticulasCG/src/opengl/part/LoadTextura.java</file>
         </group>
     </open-files>
 </project-private>

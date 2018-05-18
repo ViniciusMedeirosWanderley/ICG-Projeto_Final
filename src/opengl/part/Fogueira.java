@@ -9,7 +9,6 @@ import static com.jogamp.opengl.GL.GL_TEXTURE_MAG_FILTER;
 import static com.jogamp.opengl.GL.GL_TEXTURE_MIN_FILTER;
 import static com.jogamp.opengl.GL.GL_TRIANGLE_STRIP;
 import static com.jogamp.opengl.GL2ES2.GL_ONE_MINUS_CONSTANT_ALPHA;
-import com.jogamp.opengl.GL2ES3;
 import opengl.part.emi.Emissor;
 import opengl.part.emi.EmissorCone;
 
@@ -147,12 +146,13 @@ public class Fogueira extends SistemaParticulas{
 
         @Override
         public void criarParticula(Particula p) {
-            float minx = posx - 0.1f;
-            float maxx = posx + 0.1f;
+            float dp = 0.23f; //0.1f
+            float minx = posx - dp;
+            float maxx = posx + dp;
             float x = (minx + rand.nextFloat() * (maxx - minx));
             
-            float minz = posz - 0.1f;
-            float maxz = posz + 0.1f;
+            float minz = posz - dp;
+            float maxz = posz + dp;
             float z = (minz + rand.nextFloat() * (maxz - minz));
                         
             p.setPos(x, 0, z);                                    
