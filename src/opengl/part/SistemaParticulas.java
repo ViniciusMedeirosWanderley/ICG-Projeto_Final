@@ -29,12 +29,15 @@ public class SistemaParticulas {
     float TAM;
     // emissores que compoe o sistema
     //Emissor[] emissores;        
-    ArrayList<Emissor> emissores;
+    ArrayList<Emissor> emissores;    
+    
+    private float[] pos;
 
     public SistemaParticulas(int[] textura, float temporizador, float pTamanho) {
         this.textura = textura;        
         this.tempo_step = temporizador;        
         this.TAM = pTamanho;
+        this.pos = new float[3];
         
         emissores = new ArrayList<>(5);
     }
@@ -54,7 +57,9 @@ public class SistemaParticulas {
     public void step(){
         //ang += (0.5f * tempo_step) % (2*Math.PI);        
         for (Emissor e : emissores) {
-            e.update();
+            if(e.getOn()){                
+               e.update();
+            }
         }
     }    
     
@@ -100,6 +105,16 @@ public class SistemaParticulas {
             }            
         }
         gl.glDisable(GL_TEXTURE_2D);
+    }
+    
+    public void setPos(float x, float y, float z){
+        this.pos[0] = x;
+        this.pos[1] = y;
+        this.pos[2] = z;
+    }
+    
+    public float[] getPos(){
+        return pos;
     }
     
 }

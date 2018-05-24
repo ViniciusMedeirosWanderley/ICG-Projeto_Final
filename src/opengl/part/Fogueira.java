@@ -97,7 +97,7 @@ public class Fogueira extends SistemaParticulas{
                 
                 //float dx = x - posx;
                 float dz = z - posz;
-                //System.out.println(dx*dx + dz*dz);
+                
                 // cria um efeito que parece Bloom
                 //if((x*x + z*z) >= 1.16f)//1.0f                
                 if((dz) >= 0.083f)
