@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package opengl.control;
 
 import com.jogamp.opengl.awt.GLJPanel;
@@ -48,8 +43,8 @@ public class Mouse  implements MouseMotionListener ,MouseListener{
             cam.rotacionarY(-1.0);
         }
         
-        System.out.println("Dragged" + " in " + "X = " + xAtual + " Y = " + yAtual); 
-        System.out.println("Dragged" + " in " + "X = " + tela.height + " Y = " + tela.height); 
+        //System.out.println("Dragged" + " in " + "X = " + xAtual + " Y = " + yAtual); 
+        //System.out.println("Dragged" + " in " + "X = " + tela.height + " Y = " + tela.height); 
         
     }
 
@@ -92,12 +87,12 @@ public class Mouse  implements MouseMotionListener ,MouseListener{
 
     @Override
     public void mouseEntered(MouseEvent me) {
-        System.out.println("O mouse entrou na tela");
+        //System.out.println("O mouse entrou na tela");
     }
 
     @Override
     public void mouseExited(MouseEvent me) {
-        System.out.println("O mouse saiu da tela");
+        //System.out.println("O mouse saiu da tela");
     }
    
 }

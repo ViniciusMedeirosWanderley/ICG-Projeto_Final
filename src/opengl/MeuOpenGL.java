@@ -11,6 +11,7 @@ import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
 import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW_MATRIX;
 import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.math.VectorUtil;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
@@ -44,11 +45,18 @@ public class MeuOpenGL implements GLEventListener{
     Camera cam;       
     
     Modelo arvore;
-    Modelo arvore2;
-    Modelo fogueira;        
+    Modelo arvore2; //Arvore feia
+    Modelo arvore3; //Pinheiro
+    Modelo fogueira;  
+    Modelo barraca;
+    Modelo cenario;
     
     Texture textura_fogueira;
-    Texture textura_arvore;    
+    Texture textura_arvore;
+    Texture textura_arvore3;
+    Texture textura_barraca;
+    Texture textura_cenario;
+    Texture textura_ceu;
     
     Firework fogos0;
     Firework fogos1;
@@ -161,9 +169,23 @@ public class MeuOpenGL implements GLEventListener{
             gl.glEnable(GL_DEPTH_TEST);
         gl.glPopMatrix();
         
-        gl.glEnable(GL_LIGHTING);                   
+        gl.glEnable(GL_LIGHTING);        
         
+        // Desenha Cenario
         gl.glPushMatrix();
+            gl.glColor3f(1f,1f,1f);
+            gl.glScalef(0.5f, 0.5f, 0.5f);
+            gl.glTranslatef(-0.5f, -1.32f, 4.40f);
+            gl.glEnable(GL_TEXTURE_2D);
+            textura_cenario.bind(gl);
+            desenhaModelo(gl,cenario);
+            gl.glDisable(GL_TEXTURE_2D);
+        gl.glPopMatrix();
+        
+        
+        
+        
+        /*gl.glPushMatrix();
             gl.glColor3f(1f,1f,1f);
             gl.glScalef(2f, 2f, 2f);
             gl.glTranslatef(0f,-0.5f,0f);
@@ -173,7 +195,7 @@ public class MeuOpenGL implements GLEventListener{
             gl.glDisable(GL_TEXTURE_2D);
         gl.glPopMatrix();
         
-        /*// Desenha Arvores
+        // Desenha Arvores
         gl.glPushMatrix();                               
             gl.glColor3f(1f,0f,0f);
             /// Luz
@@ -277,10 +299,18 @@ public class MeuOpenGL implements GLEventListener{
     private void desenhaEsfera(){        
         GL2 gl = gl2;
         
-        gl.glColor4f(0f, 0f, 0.111f, 1f); 
-        gl.glTranslatef(cam.getPos()[0], 0, cam.getPos()[2]);
-
-        glu.gluSphere(glu.gluNewQuadric(), 10,20,20);                    
+        //gl.glColor4f(0f, 0f, 0.111f, 1f);
+        gl.glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
+        gl.glTranslatef(cam.getPos()[0], -0.5f, cam.getPos()[2]);
+        
+        GLUquadric esfera = glu.gluNewQuadric();
+        textura_ceu.enable(gl);
+        textura_ceu.bind(gl);
+        glu.gluQuadricTexture(esfera, true);
+        glu.gluSphere(esfera, 10, 20, 20);
+        textura_ceu.disable(gl);
+        
+        //glu.gluSphere(glu.gluNewQuadric(), 10,20,20);                    
     }
     
     private void desenhaModelo(GL2 gl, Modelo m){               
@@ -388,6 +418,10 @@ public class MeuOpenGL implements GLEventListener{
         File night = new File("img/night.bmp");
         File fog = new File("assets/Fogueira/text_fogueira.png");
         File txtArvore = new File("assets/Arvore/txtArvore.jpg");
+        File txtArvore2 = new File("assets/Arvore/txtArvore2.jpg");
+        File txtBarraca = new File("assets/Barraca/textBarraca.bmp");
+        File txtCenario = new File("assets/Cenario/textCenario.bmp");
+        File txtCeu5k = new File("assets/Ceu/ceu5k.jpg");
         
         try {            
             textura_particula = LoadTextura.loadTexturaAlpha(rgb, alpha);
@@ -396,6 +430,10 @@ public class MeuOpenGL implements GLEventListener{
             
             textura_fogueira = TextureIO.newTexture(fog, false);
             textura_arvore = TextureIO.newTexture(txtArvore, false);
+            textura_arvore3 = TextureIO.newTexture(txtArvore2, false);
+            textura_barraca = TextureIO.newTexture(txtBarraca, false);
+            textura_cenario = TextureIO.newTexture(txtCenario, false);
+            textura_ceu = TextureIO.newTexture(txtCeu5k, false);
         } catch (IOException ex) {
             System.err.println("Erro carregando textura");
         }        
@@ -409,7 +447,10 @@ public class MeuOpenGL implements GLEventListener{
         try {            
             arvore = LoadModelos.loadObj(new File("assets/Tree/lowpolytree.obj"));           
             fogueira = LoadModelos.loadObj(new File("assets/Fogueira/fogueira.obj"));            
-            arvore2 = LoadModelos.loadObj(new File("assets/Arvore/arvore.obj"));                        
+            arvore2 = LoadModelos.loadObj(new File("assets/Arvore/arvore.obj"));     
+            arvore3 = LoadModelos.loadObj(new File("assets/Arvore/arvore2.obj"));
+            barraca = LoadModelos.loadObj(new File("assets/Barraca/barraca.obj"));
+            cenario = LoadModelos.loadObj(new File("assets/Cenario/Cenario_Floresta.obj"));
         } catch (IOException ex) {
             System.err.println("Erro carregando modelo.");
         }        
