@@ -29,7 +29,7 @@ public class Main {
         //GLCanvas canvas = new GLCanvas(capabilities);  
         GLJPanel panel = new GLJPanel(capabilities);                
         
-        JFrame frame = new JFrame("OpenGL com JOGL");                
+        JFrame frame = new JFrame("OpenGL com JOGL");                        
         
         frame.setSize(800, 600);        
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,7 +56,7 @@ public class Main {
         anim.start();
         
         //Testando mouse
-        Mouse mouse = new Mouse(panel,cam);        
+        Mouse mouse = new Mouse(panel,cam);                
         //Adicionando listeners do mouse
         panel.addMouseMotionListener(mouse);
         panel.addMouseListener(mouse);

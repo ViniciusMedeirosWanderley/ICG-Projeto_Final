@@ -92,13 +92,9 @@ public class MeuOpenGL implements GLEventListener{
         gl.glEnable(GL_BLEND); //Enable alpha blending
         gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Set the blend function
         //////////////////////////////////
-                
-        /* Inicializa a Luz ambiente 
-        *  Ainda precisa ser ativada atraves do gl.glEnable(GL_LIGHTING)
-        *  Isto e realizado dentro do metodo desenha(), apos o ceu ser renderizado
-        */
-        gl.glEnable(GL_LIGHT0);
-        gl.glLightfv(GL_LIGHT0, GL_AMBIENT, new float[]{0.1f,0.1f,0.1f,1.0f}, 0);            
+
+        configurarLuz(gl);
+        
                 
         // Fog (Nao usar por enquanto)
         //float fogColor[] = {0f, 0f, 0.111f, 1f};
@@ -119,6 +115,8 @@ public class MeuOpenGL implements GLEventListener{
         
     }        
     
+    float[] position = new float[]{0.0f, -0.3f, 1.0f, 1.0f};
+    
     @Override
     public void display(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();  // get the OpenGL 2 graphics context
@@ -130,6 +128,8 @@ public class MeuOpenGL implements GLEventListener{
         glu.gluLookAt(cam.getPos()[0], cam.getPos()[1], cam.getPos()[2],
                       cam.getLook()[0], cam.getLook()[1], cam.getLook()[2],
                       cam.getUp()[0], cam.getUp()[1], cam.getUp()[2]);                
+        
+        gl.glLightfv(GL_LIGHT0,GL_POSITION, position, 0);
         
         //gl.glEnable(GL_FOG);        
         
@@ -182,44 +182,6 @@ public class MeuOpenGL implements GLEventListener{
             gl.glDisable(GL_TEXTURE_2D);
         gl.glPopMatrix();
         
-        
-        
-        
-        /*gl.glPushMatrix();
-            gl.glColor3f(1f,1f,1f);
-            gl.glScalef(2f, 2f, 2f);
-            gl.glTranslatef(0f,-0.5f,0f);
-            gl.glEnable(GL_TEXTURE_2D);            
-            textura_arvore.bind(gl);
-            desenhaModelo(gl,arvore2);            
-            gl.glDisable(GL_TEXTURE_2D);
-        gl.glPopMatrix();
-        
-        // Desenha Arvores
-        gl.glPushMatrix();                               
-            gl.glColor3f(1f,0f,0f);
-            /// Luz
-            gl.glEnable(GL_LIGHTING);   
-            gl.glEnable(GL_LIGHT0);
-            gl.glLightfv(GL_LIGHT0, GL_AMBIENT, new float[]{0.3f,0.3f,0.3f}, 0);
-            //gl.glLightfv(GL_LIGHT0, GL_SPECULAR, new float[]{1f,1f,1f}, 0);            
-            float[] diffuse = {0.029850f,0.106291f,0.017666f,1};
-            float[] specular = {0.085514f,0.355277f,0.074845f,1};
-            gl.glMaterialfv(GL_FRONT, GL_AMBIENT, new float[]{0f,0f,0f,1}, 0);            
-            gl.glMaterialfv(GL_FRONT, GL_DIFFUSE,  diffuse, 0);            
-            gl.glMaterialfv(GL_FRONT, GL_SPECULAR, specular, 0);            
-            
-            ///
-            gl.glTranslatef(-8.5f, 1.0f, 0);
-            for (int i = 0; i < 10; i++) {                
-                //desenhaModelo(gl, arvore);
-                gl.glTranslatef(2.0f, 0, 0);
-                gl.glMaterialfv(GL_FRONT, GL_DIFFUSE,  diffuse, 0);            
-                gl.glMaterialfv(GL_FRONT, GL_SPECULAR, specular, 0);            
-            }
-            gl.glDisable(GL_LIGHTING);
-        gl.glPopMatrix();
-        */
         // Desenha Fogueira
         gl.glPushMatrix();                               
             gl.glColor3f(1f,1f,1f);
@@ -240,7 +202,7 @@ public class MeuOpenGL implements GLEventListener{
         gl.glPopMatrix();                        
                    
         // desenha chao
-        gl.glPushMatrix();                        
+        gl.glPushMatrix();            
             desenhaChao(gl);                                    
         gl.glPopMatrix();        
     }
@@ -338,10 +300,10 @@ public class MeuOpenGL implements GLEventListener{
                     ny = normal[1];
                     nz = normal[2];                    
                     
-                    if((m == arvore) && (nIndex > 110)){
-                        gl.glMaterialfv(GL_FRONT, GL_DIFFUSE, new float[]{0.176206f,0.051816f,0.016055f,1}, 0);            
-                        gl.glMaterialfv(GL_FRONT, GL_SPECULAR, new float[]{0.015532f,0.005717f,0.002170f,1}, 0);            
-                    }
+                    //if((m == arvore) && (nIndex > 110)){
+                      //  gl.glMaterialfv(GL_FRONT, GL_DIFFUSE, new float[]{0.176206f,0.051816f,0.016055f,1}, 0);            
+                        //gl.glMaterialfv(GL_FRONT, GL_SPECULAR, new float[]{0.015532f,0.005717f,0.002170f,1}, 0);            
+                    //}
                     
                     //Coordenadas da Textura (se houver)                    
                     if(face.getVTexturas().size() > 0){
@@ -386,8 +348,9 @@ public class MeuOpenGL implements GLEventListener{
     }
 
     private void desenhaChao(GL2 gl) {
-        float size = 100.0f;//100.0f     
-        gl.glColor4f(1f,1f,1f,1f);
+        float size = 4.0f;//100.0f     
+        gl.glTranslatef(0, 0, 2f);
+        gl.glColor4f(1f,1f,1f,1f);        
         gl.glEnable(GL_TEXTURE_2D);
         gl.glBindTexture(GL_TEXTURE_2D, textura_grass[0]);                
         gl.glBegin(GL_TRIANGLE_STRIP); // Build Quad From A Triangle Strip                 
@@ -480,5 +443,35 @@ public class MeuOpenGL implements GLEventListener{
         fogos1.setExplosao(4.0f);
         fogos1.setRepeat(true);
         fogos1.incializarParticulas();
+    }
+
+    private void configurarLuz(GL2 gl) {
+                        
+        /* Inicializa a Luz ambiente 
+        *  Ainda precisa ser ativada atraves do gl.glEnable(GL_LIGHTING)
+        *  Isto e realizado dentro do metodo desenha(), apos o ceu ser renderizado
+        */                
+        gl.glLightModelfv(GL_LIGHT_MODEL_AMBIENT,new float[]{0.0f,0.0f,0.0f,1f}, 0); //0.1f
+        // Enable color tracking
+        //gl.glEnable(GL_COLOR_MATERIAL);
+        // Front material ambient and diffuse colors track glColor
+        //gl.glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
+        
+        //orange red    (255,69,0)
+        //orange        (255,165,0)
+        
+        ambient = new float[]{ 1.0f, 165f/255f, 0.0f, 1.0f }; 
+        diffuse = new float[]{ 1.0f, 165f/255f, 0.0f, 1.0f };
+        
+        gl.glEnable(GL_LIGHT0);
+        gl.glLightfv(GL_LIGHT0, GL_AMBIENT, ambient, 0);
+        gl.glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse, 0);
+        
+        gl.glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0f);
+        gl.glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.2f);//0.08f
+        gl.glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.07f);//0.08f
+        
+        //gl.glEnable(GL_NORMALIZE);
+        //gl.glEnable(GL_RESCALE_NORMAL);
     }
 }
