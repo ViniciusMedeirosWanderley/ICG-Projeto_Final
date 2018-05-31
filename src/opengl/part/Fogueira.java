@@ -1,6 +1,5 @@
 package opengl.part;
 
-import com.jogamp.opengl.GL;
 import static com.jogamp.opengl.GL.GL_LINEAR;
 import static com.jogamp.opengl.GL.GL_ONE_MINUS_SRC_ALPHA;
 import static com.jogamp.opengl.GL.GL_SRC_ALPHA;
@@ -18,28 +17,25 @@ import opengl.part.emi.EmissorCone;
  */
 public class Fogueira extends SistemaParticulas{
     
-    float posx;
-    float posy;
-    float posz;
+    float posx,posy,posz;   
     
-    float icorx;
-    float icory;
-    float icorz;
+    float icorx,icory,icorz;    
+    float fcorx,fcory,fcorz;
+    float cordx,cordy,cordz;
     
-    float fcorx;
-    float fcory;
-    float fcorz;
+    EmissorFogueira e;    
     
-    float cordx;
-    float cordy;
-    float cordz;
+    private float dp;
+    private float altura;
+    private int nParticulas;
+    
     
     public Fogueira(int[] textura, float temporizador, float pTamanho) {
         super(textura, temporizador, pTamanho);
         
-        Emissor e = new EmissorFogueira(200, temporizador, pTamanho);
-        e.initParticulas();
-        emissores.add(e);        
+        dp = 0.23f;
+        altura = 1.0f;
+        nParticulas = 200;
         
         posx = 0f;
         posy = 0f;
@@ -60,6 +56,13 @@ public class Fogueira extends SistemaParticulas{
         cordz = fcorz - icorz;
     }
     
+    public void iniciar(){
+        e = new EmissorFogueira(nParticulas, tempo_step, TAM);
+        e.initParticulas();
+        emissores.add(e);
+    }
+    
+    @Override
     public void setPos(float x, float y, float z){
         posx = x;
         posy = y;
@@ -98,13 +101,12 @@ public class Fogueira extends SistemaParticulas{
                 //float dx = x - posx;
                 float dz = z - posz;
                 
-                // cria um efeito que parece Bloom
-                //if((x*x + z*z) >= 1.16f)//1.0f                
+                // cria um efeito que parece Bloom                
                 if((dz) >= 0.083f)
                     gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
                 else {
                     gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                }
+                }                
                 
                 x += posx;
                 y += posy;
@@ -134,19 +136,47 @@ public class Fogueira extends SistemaParticulas{
         }
         gl.glDisable(GL_TEXTURE_2D);        
         gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }    
+    
+        
+    public EmissorFogueira getEmissor(){
+        return this.e;
+    }    
+            
+    public void setDxDz(float variacao){
+        this.dp = variacao;
+    }
+
+    public float getDxDz(){
+        return this.dp;
+    }
+
+    public void setAltura(float altura){
+        this.altura = altura;
+    }
+
+    public float getAltura(){
+        return this.altura;
+    }
+    
+    public void setQtdParticulas(int qtd){
+        this.nParticulas = qtd;
+    }
+
+    public int getQtdParticulas(){
+        return this.nParticulas;
     }
     
     
     
-    private class EmissorFogueira extends EmissorCone{
-    
+    public class EmissorFogueira extends EmissorCone{        
+        
         public EmissorFogueira(int qtdParticulas, float dt, float pTamanho) {
             super(qtdParticulas, dt, pTamanho);
         }
 
         @Override
-        public void criarParticula(Particula p) {
-            float dp = 0.23f; //0.1f
+        public void criarParticula(Particula p) {            
             float minx = posx - dp;
             float maxx = posx + dp;
             float x = (minx + rand.nextFloat() * (maxx - minx));
@@ -169,7 +199,7 @@ public class Fogueira extends SistemaParticulas{
             // Emite em forma de cone
             vx = randFloat()/4;            
             vz = randFloat()/4;      
-            vy = 1.0f;                    
+            vy = altura;//1.0f                    
 
             p.setVel(vx,vy,vz);
         }
@@ -196,8 +226,8 @@ public class Fogueira extends SistemaParticulas{
                 if(p.getVida() > p.getVidaMax()){
                     criarParticula(p);
                 }
-            }
-            //ordenaParticulasDesc();
+            }            
+            //ordenaParticulasDesc();                        
             ordenaParticulasCresc();
         }
     

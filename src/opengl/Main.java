@@ -26,7 +26,7 @@ public class Main {
         GLCapabilities capabilities = new GLCapabilities(profile);
         capabilities.setDoubleBuffered(true);        
         
-        //GLCanvas canvas = new GLCanvas(capabilities);  
+        GLCanvas canvas = new GLCanvas(capabilities);  
         GLJPanel panel = new GLJPanel(capabilities);                
         
         JFrame frame = new JFrame("OpenGL com JOGL");                        

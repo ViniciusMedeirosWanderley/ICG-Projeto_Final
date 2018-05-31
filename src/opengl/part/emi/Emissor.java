@@ -64,7 +64,7 @@ public abstract class Emissor {
         }    
     }
     
-    protected void ordenaParticulasCresc(){        
+    public void ordenaParticulasCresc(){        
         Arrays.sort(particulas, (Particula p1, Particula p2) -> {
             float z1 = p1.getPos()[2];
             float z2 = p2.getPos()[2];
@@ -75,7 +75,7 @@ public abstract class Emissor {
         });
     }
     
-    protected void ordenaParticulasDesc(){        
+    public void ordenaParticulasDesc(){        
         Arrays.sort(particulas, (Particula p1, Particula p2) -> {
             float z1 = p1.getPos()[2];
             float z2 = p2.getPos()[2];

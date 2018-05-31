@@ -83,19 +83,16 @@ public class Firework extends SistemaParticulas{
                 if(e instanceof EmissorVertical){                      
                     if(p.getVida() > p.getVidaMax()){                          
                         vertical.setOn(false);                        
-                        esfera.setOn(true);
-                        //System.out.println(p.getVida()+ " "+i);
+                        esfera.setOn(true);                        
                         setPos( p.getPos()[0] + getPos()[0],
                                 p.getPos()[1] + getPos()[1],
                                 p.getPos()[2] + getPos()[2]);
                         break;
                     }
                 }else{
-                    if(p.getVida() > p.getVidaMax()){                          
-                        //System.out.println(p.getVida()+ " "+i);                        
+                    if(p.getVida() > p.getVidaMax()){                                                  
                         contador++;
-                        if(contador >= _particulas.length){
-                            //System.out.println(p.getVida()+ " "+i);
+                        if(contador >= _particulas.length){                            
                             esfera.setOn(false);
                             vertical.setOn(true);
                             setPos(init_pos[0],init_pos[1],init_pos[2]);
@@ -116,14 +113,13 @@ public class Firework extends SistemaParticulas{
                 float[] cor = p.getCor();                                
                 float r = cor[0];
                 float g = cor[1];
-                float b = cor[2];
+                float b = cor[2];                
                 
-                //System.out.println("cor"+ i +" = "+r+" "+g+" "+b);                                                
-                if(e instanceof EmissorVertical){
+                if(e instanceof EmissorVertical){                    
                     gl.glColor4f(r, g, b, 1.0f);
                 }else{
                     gl.glColor4f(r, g, b, p.getVidaMax()-p.getVida());
-                }
+                }                
                 
                 gl.glBegin(GL_TRIANGLE_STRIP);                    
                     gl.glTexCoord2d(1, 1);
@@ -142,7 +138,7 @@ public class Firework extends SistemaParticulas{
             }                        
             
         }
-        gl.glDisable(GL_TEXTURE_2D);
+        gl.glDisable(GL_TEXTURE_2D);        
     }    
 
     @Override

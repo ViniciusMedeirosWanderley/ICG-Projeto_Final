@@ -37,6 +37,7 @@ public class MeuOpenGL implements GLEventListener{
     public static GL2 gl2;
     
     Fogueira sp_fogueira;
+    Fogueira chama0;
     
     int[] textura_particula;
     int[] textura_grass;
@@ -65,6 +66,9 @@ public class MeuOpenGL implements GLEventListener{
     float[] diffuse  = new float[3];
     float[] specular = new float[3];
     float[] ambient  = new float[3];
+    
+    float[] luz_fogueira_position = new float[4];
+    float[] luz_chama_position = new float[4];
 
     public MeuOpenGL(Camera c) {
         cam = c;
@@ -115,8 +119,7 @@ public class MeuOpenGL implements GLEventListener{
         
     }        
     
-    float[] position = new float[]{0.0f, -0.3f, 1.0f, 1.0f};
-    
+    float z = 0;
     @Override
     public void display(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();  // get the OpenGL 2 graphics context
@@ -125,11 +128,14 @@ public class MeuOpenGL implements GLEventListener{
         gl.glMatrixMode(GL_MODELVIEW);
         gl.glLoadIdentity();   
         
+        //System.out.println("POS: "+cam.getPos()[0] +" "+cam.getPos()[1]+" "+cam.getPos()[2]);
+                
         glu.gluLookAt(cam.getPos()[0], cam.getPos()[1], cam.getPos()[2],
                       cam.getLook()[0], cam.getLook()[1], cam.getLook()[2],
                       cam.getUp()[0], cam.getUp()[1], cam.getUp()[2]);                
-        
-        gl.glLightfv(GL_LIGHT0,GL_POSITION, position, 0);
+                
+        gl.glLightfv(GL_LIGHT0,GL_POSITION, luz_fogueira_position, 0);        
+        gl.glLightfv(GL_LIGHT1,GL_POSITION, luz_chama_position, 0);
         
         //gl.glEnable(GL_FOG);        
         
@@ -152,11 +158,16 @@ public class MeuOpenGL implements GLEventListener{
             desenhaSemRotacao(gl, fogos1.getPos()[0], fogos1.getPos()[2], fogos1);            
         gl.glPopMatrix();
         
+        // Desenha chamas                        
+        gl.glPushMatrix();            
+            gl.glDisable(GL_LIGHTING);                        
+            desenhaSemRotacao(gl, chama0.getX(), chama0.getZ(), chama0);            
+        gl.glPopMatrix();        
         
         //Desenha Fogueira        
-        gl.glPushMatrix();
+        gl.glPushMatrix();            
             gl.glDisable(GL_LIGHTING); 
-            desenhaSemRotacao(gl, sp_fogueira.getX(), sp_fogueira.getZ(), sp_fogueira);            
+            desenhaSemRotacao(gl, sp_fogueira.getX(), sp_fogueira.getZ(), sp_fogueira);                        
         gl.glPopMatrix();
         
         drawable.swapBuffers();        
@@ -203,7 +214,7 @@ public class MeuOpenGL implements GLEventListener{
                    
         // desenha chao
         gl.glPushMatrix();            
-            desenhaChao(gl);                                    
+            //desenhaChao(gl);                                    
         gl.glPopMatrix();        
     }
 
@@ -233,7 +244,7 @@ public class MeuOpenGL implements GLEventListener{
         int i,j;            
         // save the current modelview matrix
         gl.glPushMatrix();            
-        gl.glTranslatef(fx, 0, fz+fz);        
+        gl.glTranslatef(fx+fx, 0, fz+fz);        
         // get the current modelview matrix                
         gl.glGetFloatv(GL_MODELVIEW_MATRIX , FloatBuffer.wrap(modelview));
         /// undo all rotations
@@ -249,7 +260,7 @@ public class MeuOpenGL implements GLEventListener{
         /// set the modelview with no rotations and scaling
         gl.glLoadMatrixf(FloatBuffer.wrap(modelview));            
 
-        gl.glTranslatef(-fx, 0, -fz-fz);
+        gl.glTranslatef(-fx-fx, 0, -fz-fz);
 
         sistema.draw();
         sistema.step();            
@@ -262,7 +273,7 @@ public class MeuOpenGL implements GLEventListener{
         GL2 gl = gl2;
         
         //gl.glColor4f(0f, 0f, 0.111f, 1f);
-        gl.glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
+        gl.glColor4f(0.3f, 0.3f, 0.3f, 1.0f);
         gl.glTranslatef(cam.getPos()[0], -0.5f, cam.getPos()[2]);
         
         GLUquadric esfera = glu.gluNewQuadric();
@@ -424,8 +435,30 @@ public class MeuOpenGL implements GLEventListener{
         float tamanho = 0.09f;
         
         // Fogueira
-        sp_fogueira = new Fogueira(textura_particula, step, tamanho);
-        sp_fogueira.setPos(0.0f, -0.35f, 1.0f);
+        sp_fogueira = new Fogueira(textura_particula, step*0.8f, tamanho);
+        sp_fogueira.setPos(0.0f, -0.35f, 1.0f); 
+        sp_fogueira.setAltura(0.9f);
+        sp_fogueira.setDxDz(0.22f);
+        sp_fogueira.setQtdParticulas(300);
+        sp_fogueira.iniciar();        
+        
+        luz_fogueira_position[0] = sp_fogueira.getX() * 2;
+        luz_fogueira_position[1] = -0.3f;//sp_fogueira.getY();
+        luz_fogueira_position[2] = sp_fogueira.getZ() * 2;
+        luz_fogueira_position[3] = 1.0f;        
+        
+        // Chamas
+        chama0 = new Fogueira(textura_particula, step, tamanho);
+        chama0.setPos(-22.0f, 1.0f, 2f);//-16.5f
+        chama0.setAltura(0.5f);
+        chama0.setDxDz(0.1f);
+        chama0.setQtdParticulas(100);
+        chama0.iniciar();        
+        
+        luz_chama_position[0] = chama0.getX() * 2;
+        luz_chama_position[1] = chama0.getY();
+        luz_chama_position[2] = chama0.getZ() * 2;
+        luz_chama_position[3] = 1.0f;        
         
         // Fogos de Artificio
         fogos0 = new Firework(textura_particula, step*2, tamanho/4);   
@@ -447,10 +480,6 @@ public class MeuOpenGL implements GLEventListener{
 
     private void configurarLuz(GL2 gl) {
                         
-        /* Inicializa a Luz ambiente 
-        *  Ainda precisa ser ativada atraves do gl.glEnable(GL_LIGHTING)
-        *  Isto e realizado dentro do metodo desenha(), apos o ceu ser renderizado
-        */                
         gl.glLightModelfv(GL_LIGHT_MODEL_AMBIENT,new float[]{0.0f,0.0f,0.0f,1f}, 0); //0.1f
         // Enable color tracking
         //gl.glEnable(GL_COLOR_MATERIAL);
@@ -463,13 +492,23 @@ public class MeuOpenGL implements GLEventListener{
         ambient = new float[]{ 1.0f, 165f/255f, 0.0f, 1.0f }; 
         diffuse = new float[]{ 1.0f, 165f/255f, 0.0f, 1.0f };
         
+        // Luz da fogueira principal
         gl.glEnable(GL_LIGHT0);
         gl.glLightfv(GL_LIGHT0, GL_AMBIENT, ambient, 0);
         gl.glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse, 0);
         
         gl.glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0f);
-        gl.glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.2f);//0.08f
-        gl.glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.07f);//0.08f
+        gl.glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.2f);
+        gl.glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.07f);
+        
+        // Luz das chamas
+        gl.glEnable(GL_LIGHT1);
+        gl.glLightfv(GL_LIGHT1, GL_AMBIENT, ambient, 0);
+        gl.glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse, 0);
+        
+        gl.glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.0f);
+        gl.glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.5f);
+        gl.glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.2f);        
         
         //gl.glEnable(GL_NORMALIZE);
         //gl.glEnable(GL_RESCALE_NORMAL);

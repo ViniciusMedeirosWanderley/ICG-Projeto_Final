@@ -27,7 +27,7 @@ public class MapaTeclado extends InputMap {
         Action rotCamDir = new AbstractAction("rDir") {
             @Override
             public void actionPerformed(ActionEvent e) {                                                                
-                cam.rotacionarY(1.0f);                
+                cam.rotacionarY(1.5f);                
             }
         };        
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false),"rDir");        
@@ -37,7 +37,7 @@ public class MapaTeclado extends InputMap {
         Action rotCamEsq = new AbstractAction("rEsq") {
             @Override
             public void actionPerformed(ActionEvent e) {                                                                
-                cam.rotacionarY(-1.0f);                
+                cam.rotacionarY(-1.5f);                
             }
         };                
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false),"rEsq");        
