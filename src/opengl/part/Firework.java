@@ -20,7 +20,7 @@ public class Firework extends SistemaParticulas{
     
     private float[] init_pos;
     
-    public Firework(int[] textura, float temporizador, float pTamanho) {
+    public Firework(int[] textura, float temporizador, float pTamanho, int qtdParticulas) {
         super(textura, temporizador, pTamanho);
         // Adiciona emissor vertical
         EmissorVertical ev = new EmissorVertical(2, 1, temporizador*2, pTamanho);                
@@ -29,7 +29,7 @@ public class Firework extends SistemaParticulas{
         this.vertical = ev;
         
         // Adiciona emissor esfera
-        EmissorEsfera ee = new EmissorEsfera(180, temporizador, pTamanho/2);///3        
+        EmissorEsfera ee = new EmissorEsfera(qtdParticulas, temporizador, pTamanho/2);//180 /3        
         ee.setOn(false);        
         //ee.setRepeat(false);
         super.adicionarEmissor(ee);        
@@ -53,6 +53,15 @@ public class Firework extends SistemaParticulas{
         emissores.forEach((emissor) -> {
             emissor.initParticulas();
         });    
+    }
+    
+    public void reiniciar(){
+        esfera.setOn(false);
+        esfera.initParticulas();        
+        
+        setPos(init_pos[0],init_pos[1],init_pos[2]);
+        vertical.setOn(true);
+        vertical.initParticulas();
     }
     
     public void setCor(float r, float g, float b){

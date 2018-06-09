@@ -13,6 +13,7 @@ public class Camera {
     private float[] up;    
     
     private double dir;
+    private double ydir;
 
     public Camera() {
         pos  = new float[3];
@@ -30,7 +31,10 @@ public class Camera {
         dir = (dir + theta) % 360;
         
         float[] direcao = new float[3];
-        direcao = subVec3(direcao, pos, look);
+        float[] fakeLook = new float[3];
+        fakeLook[0] = look[0];
+        fakeLook[2] = look[2];
+        direcao = subVec3(direcao, pos, fakeLook);
         
         double ang;
         
@@ -58,6 +62,28 @@ public class Camera {
         }
         
         //System.out.println("Direcao: "+dir+"\n");
+        //System.out.println("Look: "+"x:"+look[0]+"y:"+look[1]+"z:"+look[2]+"\n");
+    }
+    
+    public void rotacionarX(double theta){         
+        ydir += theta;        
+        
+        if(theta > 0){
+            if(ydir <= 90){
+                look[1] = (float)Math.sin(Math.toRadians(ydir)) * 5.0f;                
+            }else{
+                ydir = 90;
+            }
+        }
+        
+        if(theta < 0){
+            if(ydir >= -30){
+                look[1] = (float)Math.sin(Math.toRadians(ydir)) * 5.0f;                                
+            }else{
+                ydir = -30;
+            }
+        }        
+        //System.out.println("Look: "+"x:"+look[0]+"y:"+look[1]+"z:"+look[2]+"\n");        
     }
     
     public void transladar(double dx, double dy, double dz){
@@ -67,9 +93,9 @@ public class Camera {
     }    
     
     public void moveFrente(){
-        float[] direcao = new float[3];
+        float[] direcao = new float[3];        
         subVec3(direcao, look, pos);        
-        
+        direcao[1] = 0;
         float[] norm = normalizeVec3(direcao);     
         
         scaleVec3(norm, norm, 0.1f);
@@ -81,7 +107,7 @@ public class Camera {
     public void moveTras(){
         float[] direcao = new float[3];
         subVec3(direcao, look, pos);        
-        
+        direcao[1] = 0;
         float[] norm = normalizeVec3(direcao);        
         
         scaleVec3(norm, norm, 0.1f);
@@ -93,7 +119,7 @@ public class Camera {
     public void moveEsq(){
         float[] direcao = new float[3];
         subVec3(direcao, look, pos);        
-        
+        direcao[1] = 0;
         float[] esquerda = new float[3];
         crossVec3(esquerda, up, direcao);
         
@@ -108,7 +134,7 @@ public class Camera {
     public void moveDir(){
         float[] direcao = new float[3];
         subVec3(direcao, look, pos);        
-        
+        direcao[1] = 0;
         float[] direita = new float[3];
         crossVec3(direita, direcao, up);
         

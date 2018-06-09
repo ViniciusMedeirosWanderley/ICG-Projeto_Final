@@ -39,28 +39,25 @@ public class MeuOpenGL implements GLEventListener{
     Fogueira sp_fogueira;
     Fogueira chama0;
     
-    int[] textura_particula;
-    int[] textura_grass;
-    int[] textura_night;    
+    int[] textura_particula;    
     
     Camera cam;       
     
-    Modelo arvore;
-    Modelo arvore2; //Arvore feia
-    Modelo arvore3; //Pinheiro
-    Modelo fogueira;  
-    Modelo barraca;
+    Modelo fogueira;      
     Modelo cenario;
+    Modelo chao;
     
-    Texture textura_fogueira;
-    Texture textura_arvore;
-    Texture textura_arvore3;
-    Texture textura_barraca;
+    Texture textura_fogueira;    
     Texture textura_cenario;
     Texture textura_ceu;
+    Texture textura_chao;
     
+    //Fogos artificio
     Firework fogos0;
     Firework fogos1;
+    Firework fogos2;
+    Firework fogos3;
+    boolean disparar;
     
     //Luz
     float[] diffuse  = new float[3];
@@ -72,6 +69,7 @@ public class MeuOpenGL implements GLEventListener{
 
     public MeuOpenGL(Camera c) {
         cam = c;
+        disparar = false;
     }
     
     @Override
@@ -84,8 +82,7 @@ public class MeuOpenGL implements GLEventListener{
         
         ///////////////////////////////////
         gl.glEnable(GL_DEPTH_TEST);               // enables depth testing
-        gl.glDepthFunc(GL_LEQUAL);                     // the type of depth test to do        
-        
+        gl.glDepthFunc(GL_LEQUAL);                     // the type of depth test to do                
         //gl.glEnable(GL_CULL_FACE);
         ///////////////////////////////////
         
@@ -97,15 +94,7 @@ public class MeuOpenGL implements GLEventListener{
         gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Set the blend function
         //////////////////////////////////
 
-        configurarLuz(gl);
-        
-                
-        // Fog (Nao usar por enquanto)
-        //float fogColor[] = {0f, 0f, 0.111f, 1f};
-        //gl.glFogfv(GL_FOG_COLOR, fogColor,0);
-        //gl.glFogi(GL_FOG_MODE, GL_LINEAR);
-        //gl.glFogf(GL_FOG_START, 10.0f);
-        //gl.glFogf(GL_FOG_END, 20.0f);                   
+        configurarLuz(gl);                  
                 
         carregarTexturas();
         
@@ -126,10 +115,8 @@ public class MeuOpenGL implements GLEventListener{
         gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear color and depth buffers        
         
         gl.glMatrixMode(GL_MODELVIEW);
-        gl.glLoadIdentity();   
+        gl.glLoadIdentity();           
         
-        //System.out.println("POS: "+cam.getPos()[0] +" "+cam.getPos()[1]+" "+cam.getPos()[2]);
-                
         glu.gluLookAt(cam.getPos()[0], cam.getPos()[1], cam.getPos()[2],
                       cam.getLook()[0], cam.getLook()[1], cam.getLook()[2],
                       cam.getUp()[0], cam.getUp()[1], cam.getUp()[2]);                
@@ -137,31 +124,29 @@ public class MeuOpenGL implements GLEventListener{
         gl.glLightfv(GL_LIGHT0,GL_POSITION, luz_fogueira_position, 0);        
         gl.glLightfv(GL_LIGHT1,GL_POSITION, luz_chama_position, 0);
         
-        //gl.glEnable(GL_FOG);        
         
-        //gl.glEnable(GL_CULL_FACE);                
-        //gl.glFrontFace(GL_CCW);        
         gl.glPushMatrix();
-            gl.glDisable(GL_BLEND);
-        //gl.glCullFace(GL_FRONT);                            
-            desenha(gl);
-        //gl.glCullFace(GL_BACK);                    
-          //  desenha(gl);
-          gl.glEnable(GL_BLEND);
+            gl.glDisable(GL_BLEND);        
+            desenha(gl);        
+            gl.glEnable(GL_BLEND);
         gl.glPopMatrix();
         
         
         // Desenha fogos de artificio
         gl.glPushMatrix();
             gl.glDisable(GL_LIGHTING);   
-            desenhaSemRotacao(gl, fogos0.getPos()[0], fogos0.getPos()[2], fogos0);            
-            desenhaSemRotacao(gl, fogos1.getPos()[0], fogos1.getPos()[2], fogos1);            
+            if(disparar){
+                desenhaSemRotacao(gl, fogos0.getPos()[0], fogos0.getPos()[2], fogos0);            
+                desenhaSemRotacao(gl, fogos1.getPos()[0], fogos1.getPos()[2], fogos1);            
+                desenhaSemRotacao(gl, fogos2.getPos()[0], fogos2.getPos()[2], fogos2);            
+                desenhaSemRotacao(gl, fogos3.getPos()[0], fogos3.getPos()[2], fogos3);            
+            }
         gl.glPopMatrix();
         
         // Desenha chamas                        
         gl.glPushMatrix();            
             gl.glDisable(GL_LIGHTING);                        
-            desenhaSemRotacao(gl, chama0.getX(), chama0.getZ(), chama0);            
+            desenhaSemRotacao(gl, chama0.getX(),chama0.getZ(), chama0);            
         gl.glPopMatrix();        
         
         //Desenha Fogueira        
@@ -213,8 +198,14 @@ public class MeuOpenGL implements GLEventListener{
         gl.glPopMatrix();                        
                    
         // desenha chao
-        gl.glPushMatrix();            
-            //desenhaChao(gl);                                    
+        gl.glPushMatrix();                        
+            gl.glColor3f(1f,1f,1f);
+            gl.glScalef(0.5f, 0.5f, 0.5f);            
+            gl.glTranslatef(5f, -1.52f, 0f);
+            gl.glEnable(GL_TEXTURE_2D);
+            textura_chao.bind(gl);
+            desenhaModelo(gl,chao);
+            gl.glDisable(GL_TEXTURE_2D);
         gl.glPopMatrix();        
     }
 
@@ -232,7 +223,7 @@ public class MeuOpenGL implements GLEventListener{
         // Setup perspective projection, with aspect ratio matches viewport
         gl.glMatrixMode(GL_PROJECTION);  // choose projection matrix
         gl.glLoadIdentity();             // reset projection matrix
-        glu.gluPerspective(45.0, aspect, 1.0, 100.0); // fovy, aspect, zNear, zFar
+        glu.gluPerspective(45.0, aspect, 0.5f, 100.0); // fovy, aspect, zNear, zFar
 
         // Enable the model-view transform
         gl.glMatrixMode(GL_MODELVIEW);
@@ -272,7 +263,6 @@ public class MeuOpenGL implements GLEventListener{
     private void desenhaEsfera(){        
         GL2 gl = gl2;
         
-        //gl.glColor4f(0f, 0f, 0.111f, 1f);
         gl.glColor4f(0.3f, 0.3f, 0.3f, 1.0f);
         gl.glTranslatef(cam.getPos()[0], -0.5f, cam.getPos()[2]);
         
@@ -282,8 +272,6 @@ public class MeuOpenGL implements GLEventListener{
         glu.gluQuadricTexture(esfera, true);
         glu.gluSphere(esfera, 10, 20, 20);
         textura_ceu.disable(gl);
-        
-        //glu.gluSphere(glu.gluNewQuadric(), 10,20,20);                    
     }
     
     private void desenhaModelo(GL2 gl, Modelo m){               
@@ -310,11 +298,6 @@ public class MeuOpenGL implements GLEventListener{
                     nx = normal[0];
                     ny = normal[1];
                     nz = normal[2];                    
-                    
-                    //if((m == arvore) && (nIndex > 110)){
-                      //  gl.glMaterialfv(GL_FRONT, GL_DIFFUSE, new float[]{0.176206f,0.051816f,0.016055f,1}, 0);            
-                        //gl.glMaterialfv(GL_FRONT, GL_SPECULAR, new float[]{0.015532f,0.005717f,0.002170f,1}, 0);            
-                    //}
                     
                     //Coordenadas da Textura (se houver)                    
                     if(face.getVTexturas().size() > 0){
@@ -357,28 +340,6 @@ public class MeuOpenGL implements GLEventListener{
         gl.glEnd();        
         gl.glDisable(GL_TEXTURE_2D);            
     }
-
-    private void desenhaChao(GL2 gl) {
-        float size = 4.0f;//100.0f     
-        gl.glTranslatef(0, 0, 2f);
-        gl.glColor4f(1f,1f,1f,1f);        
-        gl.glEnable(GL_TEXTURE_2D);
-        gl.glBindTexture(GL_TEXTURE_2D, textura_grass[0]);                
-        gl.glBegin(GL_TRIANGLE_STRIP); // Build Quad From A Triangle Strip                 
-                gl.glTexCoord2d(size, size);
-                gl.glVertex3f(size, -0.5f, -size); // Top Right                
-                
-                gl.glTexCoord2d(0, size);
-                gl.glVertex3f(-size, -0.5f, -size); // Top Left                
-                
-                gl.glTexCoord2d(size, 0);
-                gl.glVertex3f(size, -0.5f, size); // Bottom Right                
-                
-                gl.glTexCoord2d(0, 0);
-                gl.glVertex3f(-size, -0.5f, size); // Bottom Left                
-        gl.glEnd();        
-        gl.glDisable(GL_TEXTURE_2D);        
-    }    
     
     /**
      * Todo codigo de carregamento de textura vai neste metodo
@@ -386,28 +347,19 @@ public class MeuOpenGL implements GLEventListener{
     private void carregarTexturas() {
         System.out.println("Carregando Texturas...");
         
-        File alpha = new File("img/circlealpha.bmp");
-        File rgb = new File("img/circle.bmp");
-        File grass = new File("img/grass1.bmp");
-        File night = new File("img/night.bmp");
-        File fog = new File("assets/Fogueira/text_fogueira.png");
-        File txtArvore = new File("assets/Arvore/txtArvore.jpg");
-        File txtArvore2 = new File("assets/Arvore/txtArvore2.jpg");
-        File txtBarraca = new File("assets/Barraca/textBarraca.bmp");
+        File txtPartAlpha = new File("img/circlealpha.bmp");
+        File txtPartRGB = new File("img/circle.bmp");        
+        File txtFogueira = new File("assets/Fogueira/text_fogueira.png");        
         File txtCenario = new File("assets/Cenario/textCenario.bmp");
         File txtCeu5k = new File("assets/Ceu/ceu5k.jpg");
+        File txtChao = new File("assets/Cenario/textChao.bmp");
         
         try {            
-            textura_particula = LoadTextura.loadTexturaAlpha(rgb, alpha);
-            textura_grass = LoadTextura.loadTexturaGrass(grass);
-            textura_night = LoadTextura.loadTexturaGrass(night);            
-            
-            textura_fogueira = TextureIO.newTexture(fog, false);
-            textura_arvore = TextureIO.newTexture(txtArvore, false);
-            textura_arvore3 = TextureIO.newTexture(txtArvore2, false);
-            textura_barraca = TextureIO.newTexture(txtBarraca, false);
+            textura_particula = LoadTextura.loadTexturaAlpha(txtPartRGB, txtPartAlpha);
+            textura_fogueira = TextureIO.newTexture(txtFogueira, false);            
             textura_cenario = TextureIO.newTexture(txtCenario, false);
             textura_ceu = TextureIO.newTexture(txtCeu5k, false);
+            textura_chao = TextureIO.newTexture(txtChao, false);
         } catch (IOException ex) {
             System.err.println("Erro carregando textura");
         }        
@@ -418,13 +370,10 @@ public class MeuOpenGL implements GLEventListener{
      */
     private void carregarModelos() {
         System.out.println("Carregando Modelos...");
-        try {            
-            arvore = LoadModelos.loadObj(new File("assets/Tree/lowpolytree.obj"));           
-            fogueira = LoadModelos.loadObj(new File("assets/Fogueira/fogueira.obj"));            
-            arvore2 = LoadModelos.loadObj(new File("assets/Arvore/arvore.obj"));     
-            arvore3 = LoadModelos.loadObj(new File("assets/Arvore/arvore2.obj"));
-            barraca = LoadModelos.loadObj(new File("assets/Barraca/barraca.obj"));
+        try {                        
+            fogueira = LoadModelos.loadObj(new File("assets/Fogueira/fogueira.obj"));                        
             cenario = LoadModelos.loadObj(new File("assets/Cenario/Cenario_Floresta.obj"));
+            chao = LoadModelos.loadObj(new File("assets/Cenario/Chao.obj"));
         } catch (IOException ex) {
             System.err.println("Erro carregando modelo.");
         }        
@@ -443,13 +392,13 @@ public class MeuOpenGL implements GLEventListener{
         sp_fogueira.iniciar();        
         
         luz_fogueira_position[0] = sp_fogueira.getX() * 2;
-        luz_fogueira_position[1] = -0.3f;//sp_fogueira.getY();
+        luz_fogueira_position[1] = -0.3f;
         luz_fogueira_position[2] = sp_fogueira.getZ() * 2;
         luz_fogueira_position[3] = 1.0f;        
         
         // Chamas
         chama0 = new Fogueira(textura_particula, step, tamanho);
-        chama0.setPos(-22.0f, 1.0f, 2f);//-16.5f
+        chama0.setPos(-21.3f, 0.5f, 2.06f);
         chama0.setAltura(0.5f);
         chama0.setDxDz(0.1f);
         chama0.setQtdParticulas(100);
@@ -461,7 +410,7 @@ public class MeuOpenGL implements GLEventListener{
         luz_chama_position[3] = 1.0f;        
         
         // Fogos de Artificio
-        fogos0 = new Firework(textura_particula, step*2, tamanho/4);   
+        fogos0 = new Firework(textura_particula, step*2, tamanho/4, 180);   
         fogos0.setPos(-1, -0.5f, -5f);
         fogos0.setCor(255f/255f, 255f/255f, 200f/255f);
         fogos0.setAltura(10.0f);
@@ -469,22 +418,34 @@ public class MeuOpenGL implements GLEventListener{
         fogos0.setRepeat(true);
         fogos0.incializarParticulas();
         
-        fogos1 = new Firework(textura_particula, step*2, tamanho/4);   
+        fogos1 = new Firework(textura_particula, step*2, tamanho/4, 500);   
         fogos1.setPos(-5, -0.5f, -4f);
         fogos1.setCor(105f/255f, 255f/255f, 200f/255f);
-        fogos1.setAltura(10.0f);
+        fogos1.setAltura(9.0f);
         fogos1.setExplosao(4.0f);
         fogos1.setRepeat(true);
         fogos1.incializarParticulas();
+        
+        fogos2 = new Firework(textura_particula, step*2, tamanho/4, 200);   
+        fogos2.setPos(-3, -0.5f, -4f);
+        fogos2.setCor(255f/255f, 255f/255f, 20f/255f);
+        fogos2.setAltura(9.2f);
+        fogos2.setExplosao(3.0f);
+        fogos2.setRepeat(true);
+        fogos2.incializarParticulas();
+        
+        fogos3 = new Firework(textura_particula, step*2, tamanho/4, 300);   
+        fogos3.setPos(1f, -0.5f, -4f);
+        fogos3.setCor(0f/255f, 255f/255f, 0f/255f);
+        fogos3.setAltura(10.0f);
+        fogos3.setExplosao(3.0f);
+        fogos3.setRepeat(true);
+        fogos3.incializarParticulas();
     }
 
     private void configurarLuz(GL2 gl) {
                         
-        gl.glLightModelfv(GL_LIGHT_MODEL_AMBIENT,new float[]{0.0f,0.0f,0.0f,1f}, 0); //0.1f
-        // Enable color tracking
-        //gl.glEnable(GL_COLOR_MATERIAL);
-        // Front material ambient and diffuse colors track glColor
-        //gl.glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
+        gl.glLightModelfv(GL_LIGHT_MODEL_AMBIENT,new float[]{0.02f,0.02f,0.02f,1f}, 0);        
         
         //orange red    (255,69,0)
         //orange        (255,165,0)
@@ -503,14 +464,25 @@ public class MeuOpenGL implements GLEventListener{
         
         // Luz das chamas
         gl.glEnable(GL_LIGHT1);
-        gl.glLightfv(GL_LIGHT1, GL_AMBIENT, ambient, 0);
-        gl.glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse, 0);
+        float[] branca = new float[]{ 0.9f, 0.9f, 0.35f, 1.0f }; 
+        gl.glLightfv(GL_LIGHT1, GL_AMBIENT, branca, 0);
+        gl.glLightfv(GL_LIGHT1, GL_DIFFUSE, branca, 0);
         
-        gl.glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.0f);
+        gl.glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 2.0f);
         gl.glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.5f);
         gl.glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.2f);        
         
         //gl.glEnable(GL_NORMALIZE);
         //gl.glEnable(GL_RESCALE_NORMAL);
+    }
+    
+    public void disparaFogos(){
+        if(disparar){
+            fogos0.reiniciar();
+            fogos1.reiniciar();
+            fogos2.reiniciar();
+            fogos3.reiniciar();
+        }
+        disparar = !disparar;
     }
 }

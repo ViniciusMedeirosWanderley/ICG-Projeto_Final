@@ -1,6 +1,7 @@
 package opengl;
 
 import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.awt.GLJPanel;
@@ -43,15 +44,15 @@ public class Main {
         
         CAM = cam;
         /***************************/
-        
-        //canvas.addGLEventListener(new MeuOpenGL(cam));
-        panel.addGLEventListener(new MeuOpenGL(cam));
+        MeuOpenGL glListener = new MeuOpenGL(cam);
+        canvas.addGLEventListener(glListener);
+        //panel.addGLEventListener(glListener);
     
-        frame.add(panel);
-        //frame.add(canvas);
+        //frame.add(panel);
+        frame.add(canvas);
         
-        //FPSAnimator anim = new FPSAnimator(canvas, 30);
-        FPSAnimator anim = new FPSAnimator(panel, 30);
+        FPSAnimator anim = new FPSAnimator(canvas, 30);
+        //FPSAnimator anim = new FPSAnimator(panel, 30);
         //Animator anim = new Animator(canvas);
         anim.start();
         
@@ -65,11 +66,11 @@ public class Main {
         
         frame.setVisible(true); 
         
-        configKeyBindings(frame.getRootPane(), cam);
+        configKeyBindings(frame.getRootPane(), cam, glListener);
     }
     
-    private static void configKeyBindings(javax.swing.JRootPane root, Camera cam) {        
-        MapaTeclado key = new MapaTeclado(root, cam);
+    private static void configKeyBindings(javax.swing.JRootPane root, Camera cam, GLEventListener glListener) {        
+        MapaTeclado key = new MapaTeclado(root, cam, (MeuOpenGL)glListener);
         root.setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, key.getInputMap());
         root.setActionMap(key.getActionMap());
     }

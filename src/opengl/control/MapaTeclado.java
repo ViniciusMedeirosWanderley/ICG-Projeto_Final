@@ -9,6 +9,7 @@ import javax.swing.ComponentInputMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import opengl.MeuOpenGL;
 
 /**
  *
@@ -19,7 +20,7 @@ public class MapaTeclado extends InputMap {
     ComponentInputMap  inputMap;
     ActionMap actionMap;
 
-    public MapaTeclado(JComponent component, Camera cam) {
+    public MapaTeclado(JComponent component, Camera cam, MeuOpenGL render) {
         inputMap = new ComponentInputMap(component);
         actionMap = new ActionMap();
         
@@ -82,6 +83,34 @@ public class MapaTeclado extends InputMap {
         };        
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false),"dir");        
         actionMap.put("dir", tDir);
+        
+        Action disparaFogos = new AbstractAction("dispf") {
+            @Override
+            public void actionPerformed(ActionEvent e) {                                                                           
+                render.disparaFogos();
+            }
+        };        
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_K, 0, false),"dispf");        
+        actionMap.put("dispf", disparaFogos);
+        
+        
+        Action up = new AbstractAction("up") {
+            @Override
+            public void actionPerformed(ActionEvent e) {                                                                           
+                cam.rotacionarX(1.0f);
+            }
+        };        
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, false),"up");        
+        actionMap.put("up", up);
+        
+        Action down = new AbstractAction("down") {
+            @Override
+            public void actionPerformed(ActionEvent e) {                                                                           
+                cam.rotacionarX(-1.0f);
+            }
+        };        
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false),"down");        
+        actionMap.put("down", down);
     }
     
     public InputMap getInputMap(){
