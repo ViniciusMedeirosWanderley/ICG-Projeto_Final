@@ -1,5 +1,5 @@
 # Blender MTL File: 'None'
-# Material Count: 561
+# Material Count: 560
 
 newmtl Bark.082
 Ns 92.156863
@@ -1981,7 +1981,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textCenario.bmp
+map_Kd /home/jayme/textCenario.bmp
 
 newmtl Green_leafs.351
 Ns 92.156863
@@ -2256,7 +2256,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textCenario.bmp
+map_Kd /home/jayme/textCenario.bmp
 
 newmtl Green_leafs.376
 Ns 92.156863
@@ -2344,7 +2344,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textCenario.bmp
+map_Kd /home/jayme/textCenario.bmp
 
 newmtl Green_leafs.384
 Ns 92.156863
@@ -2971,7 +2971,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textCenario.bmp
+map_Kd /home/jayme/textCenario.bmp
 
 newmtl Green_leafs.441
 Ns 92.156863
@@ -3994,7 +3994,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textCenario.bmp
+map_Kd /home/jayme/textCenario.bmp
 
 newmtl Leafs_NONE.002
 Ns 92.156863
@@ -5164,7 +5164,7 @@ d 1.000000
 illum 2
 
 newmtl Stone
-Ns 96.078431
+Ns 94.117647
 Ka 1.000000 1.000000 1.000000
 Kd 0.640000 0.640000 0.640000
 Ks 0.500000 0.500000 0.500000
@@ -5172,7 +5172,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textCenario.bmp
+map_Kd /home/jayme/textCenario.bmp
 
 newmtl Stone.001
 Ns 92.156863
@@ -5183,18 +5183,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textCenario.bmp
-
-newmtl Stone.002
-Ns 96.078431
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd textCenario.bmp
+map_Kd /home/jayme/textCenario.bmp
 
 newmtl Water.000
 Ns 92.156863
@@ -5269,7 +5258,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textCenario.bmp
+map_Kd /home/jayme/textCenario.bmp
 
 newmtl Water.012
 Ns 92.156863
@@ -5376,7 +5365,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textCenario.bmp
+map_Kd /home/jayme/textCenario.bmp
 
 newmtl Wood.3763
 Ns 92.156863
@@ -5398,7 +5387,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textCenario.bmp
+map_Kd /home/jayme/textCenario.bmp
 
 newmtl Wood.3765
 Ns 92.156863
@@ -5926,7 +5915,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textCenario.bmp
+map_Kd /home/jayme/textCenario.bmp
 
 newmtl Wood.3815
 Ns 92.156863
@@ -6080,7 +6069,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textCenario.bmp
+map_Kd /home/jayme/textCenario.bmp
 
 newmtl Wood_NONE.000
 Ns 92.156863
@@ -6111,7 +6100,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textCenario.bmp
+map_Kd /home/jayme/textCenario.bmp
 
 newmtl Wood_NONE.007_NONE
 Ns 92.156863
